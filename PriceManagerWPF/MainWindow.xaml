@@ -1,12 +1,155 @@
-﻿<Window x:Class="PriceManagerWPF.MainWindow"
+﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PriceManagerWPF"
+        xmlns:System="clr-namespace:System;assembly=mscorlib" x:Name="mainWindow" x:Class="PriceManagerWPF.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
-    </Grid>
+        Title="MainWindow" Height="699" Width="1489" Loaded="mainWindow_Loaded" Background="#FFECECEC" Foreground="Black">
+    <Canvas HorizontalAlignment="Left" Height="652" Margin="10,10,0,0" VerticalAlignment="Top" Width="1469">
+        <ListView x:Name="listView" HorizontalAlignment="Left" Height="576" VerticalAlignment="Top" Width="205" Background="#FFECECEC" Canvas.Top="40" SelectionChanged="listView_SelectionChanged"/>
+        <Button x:Name="button" HorizontalAlignment="Left" VerticalAlignment="Top" Width="125" Height="30" Click="button_Click" BorderThickness="0,1" BorderBrush="#8C000000" Background="#FF9AFFBA" Canvas.Top="5">
+            <Label x:Name="label" Content="Add new model" FontWeight="Medium" FontFamily="Arial" FontSize="16" Background="{x:Null}" OpacityMask="#FF323030" Foreground="#FF6C6C6C"/>
+        </Button>
+        <GroupBox x:Name="groupBox" Header="Model" Canvas.Left="210" Canvas.Top="40" BorderBrush="#BF5B6E7A" BorderThickness="1" Width="285" Height="358" Background="#FFECECEC">
+            <ListBox x:Name="listBox" BorderBrush="{x:Null}" Width="284" VerticalContentAlignment="Center" HorizontalContentAlignment="Stretch" Height="326" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="4,10" Background="#FFECECEC">
+                <Expander x:Name="exp_base" Header="Base" BorderBrush="Black" BorderThickness="0,0,0,1" IsExpanded="True" Width="239">
+                    <ListBox x:Name="listBox1" Background="#FFECECEC">
+                        <WrapPanel Height="29">
+                            <TextBlock x:Name="textBlock" TextWrapping="Wrap" Text="Name:" Height="20" Width="80"/>
+                            <TextBox x:Name="textBoxName" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..." Background="#FF9AFFBA"/>
+                        </WrapPanel>
+                        <WrapPanel Height="29">
+                            <TextBlock x:Name="textBlock1" TextWrapping="Wrap" Text="Type:" Height="20" Width="80"/>
+                            <TextBox x:Name="textBoxType" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..." Background="#FF9AFFBA"/>
+                        </WrapPanel>
+                    </ListBox>
+                </Expander>
+                <Expander x:Name="exp_size" Header="Size" BorderBrush="Black" BorderThickness="0,0,0,1" Width="239">
+                    <Grid Background="#FFE5E5E5">
+                        <ListBox x:Name="listBox1_Copy">
+                            <WrapPanel Height="29">
+                                <TextBlock x:Name="textBlock2" TextWrapping="Wrap" Text="Width:" Height="20" Width="80"/>
+                                <TextBox x:Name="textBoxWidth" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..."/>
+                            </WrapPanel>
+                            <WrapPanel Height="29">
+                                <TextBlock x:Name="textBlock3" TextWrapping="Wrap" Text="Height:" Height="20" Width="80"/>
+                                <TextBox x:Name="textBoxHeight" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..."/>
+                            </WrapPanel>
+                            <WrapPanel Height="29">
+                                <TextBlock x:Name="textBlock4" TextWrapping="Wrap" Text="Depth:" Height="20" Width="80"/>
+                                <TextBox x:Name="textBoxDepth" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..."/>
+                            </WrapPanel>
+                            <WrapPanel Height="29">
+                                <TextBlock x:Name="textBlock5" TextWrapping="Wrap" Text="Angle:" Height="20" Width="80"/>
+                                <TextBox x:Name="textBoxAngle" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..."/>
+                            </WrapPanel>
+                        </ListBox>
+                    </Grid>
+                </Expander>
+                <Expander x:Name="exp_mat" Header="Materials" IsExpanded="True" BorderBrush="Black" BorderThickness="0,0,0,1" Width="239">
+                    <ListView x:Name="listViewMaterials" Width="239" SelectionChanged="materialList_Changed"/>
+                </Expander>
+                <Expander x:Name="exp_size_Copy" Header="Price" BorderBrush="Black" BorderThickness="0,0,0,1" Width="239">
+                    <Grid Background="#FFE5E5E5">
+                        <ListBox x:Name="listBox1_Copy1">
+                            <WrapPanel Height="29">
+                                <TextBlock x:Name="textBlock6" TextWrapping="Wrap" Text="Price Type:" Height="20" Width="80"/>
+                                <ComboBox x:Name="comboBoxPriceType" Width="120" SelectionChanged="comboBoxPriceType_SelectionChanged">
+                                    <ComboBoxItem Content="Unit" HorizontalAlignment="Left" Width="118"/>
+                                    <ComboBoxItem Content="Meter" HorizontalAlignment="Left" Width="118"/>
+                                    <ComboBoxItem Content="Square Meter" HorizontalAlignment="Left" Width="118"/>
+                                </ComboBox>
+                            </WrapPanel>
+                            <WrapPanel Height="29">
+                                <TextBlock x:Name="textBlock7" TextWrapping="Wrap" Text="Price:" Height="20" Width="80"/>
+                                <TextBox x:Name="textBoxPrice" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..."/>
+                            </WrapPanel>
+                            <WrapPanel Height="29">
+                                <TextBlock x:Name="textBlock8" TextWrapping="Wrap" Text="Discount:" Height="20" Width="80"/>
+                                <TextBox x:Name="textBoxDiscount" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..."/>
+                            </WrapPanel>
+                        </ListBox>
+                    </Grid>
+                </Expander>
+            </ListBox>
+        </GroupBox>
+        <ContentControl x:Name="browserContent" Canvas.Left="925" Canvas.Top="40" Height="515" Width="515" ScrollViewer.VerticalScrollBarVisibility="Disabled"/>
+        <GroupBox x:Name="materialDisplay" Header="Material" Canvas.Left="510" Canvas.Top="40" BorderBrush="#BF5B6E7A" BorderThickness="1" Width="285" Height="358" Background="#FFECECEC">
+            <StackPanel x:Name="materialPanel" Background="#FFEAEAEA" Margin="4,10">
+                <Canvas x:Name="groupMap" Height="54" Margin="0,4">
+                    <Slider x:Name="slider" Canvas.Left="60" Canvas.Top="26" Width="160" Maximum="1" Value="0.5" SmallChange="0.05" Panel.ZIndex="4" Foreground="#FFC8C8C8" Style="{DynamicResource SliderStyle1}" />
+
+                    <Label x:Name="label1" Content="Map" Height="54" Canvas.Left="60" Width="160"/>
+                    <Border BorderBrush="Black" BorderThickness="0,0,0,1" Height="54" Width="230" Panel.ZIndex="-1"/>
+                    <Button x:Name="button2" Content="Add.." Width="54" Height="54" BorderBrush="#FF171616" Background="#FFFF6868" Click="imageButton_Click"/>
+                </Canvas>
+                <Canvas x:Name="groupNormal" Height="54" Margin="0,4">
+                    <Slider x:Name="normalScale" Canvas.Left="60" Canvas.Top="26" Width="160" Maximum="1" Value="0.5" SmallChange="0.05" Panel.ZIndex="4" ValueChanged="floatProperty_ValueChanged"/>
+                    <Button x:Name="button2_Copy" Content="Add.." BorderBrush="#FF171616" Background="#FFFF6868" Click="imageButton_Click" Height="54" Width="54"/>
+                    <Label x:Name="label2" Content="Normal Map" Height="54" Canvas.Left="60" Width="160"/>
+                    <Border BorderBrush="Black" BorderThickness="0,0,0,1" Height="54" Width="230" Panel.ZIndex="-1"/>
+                </Canvas>
+                <Canvas x:Name="groupRoughness" Height="54" Margin="0,4">
+                    <Slider x:Name="roughness" Canvas.Left="60" Canvas.Top="26" Width="160" Maximum="1" Value="0.5" SmallChange="0.05" Panel.ZIndex="4" ValueChanged="floatProperty_ValueChanged"/>
+                    <Button x:Name="button2_Copy1" Content="Add.." BorderBrush="#FF171616" Background="#FFFF6868" Margin="0,0,176,-1" Click="imageButton_Click" Width="54" Height="54"/>
+                    <Label x:Name="label3" Content="Roughness Map" Height="54" Canvas.Left="60" Width="160"/>
+                    <Border BorderBrush="Black" BorderThickness="0,0,0,1" Height="54" Width="230" Panel.ZIndex="-1"/>
+                </Canvas>
+                <Canvas x:Name="groupDisplacement" Height="54" Margin="0,4">
+                    <Slider x:Name="displacementScale" Canvas.Left="60" Canvas.Top="26" Width="160" Maximum="1" Value="0.5" SmallChange="0.05" Panel.ZIndex="4" ValueChanged="floatProperty_ValueChanged"/>
+                    <Button x:Name="button2_Copy2" Content="Add.." BorderBrush="#FF171616" Background="#FFFF6868" Margin="0,0,176,-1" Click="imageButton_Click" Width="54" Height="54"/>
+
+                    <Label x:Name="label4" Content="Displacement Map" Height="54" Canvas.Left="60" Width="160"/>
+                    <Border BorderBrush="Black" BorderThickness="0,0,0,1" Height="54" Width="230" Panel.ZIndex="-1"/>
+                </Canvas>
+                <Canvas x:Name="groupColor" Height="54" Margin="0,4">
+
+                    <Border BorderBrush="Black" BorderThickness="0,0,0,1" Height="54" Width="230" Panel.ZIndex="-1"></Border>
+                </Canvas>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox x:Name="lightControls" Header="Light controls" Canvas.Left="925" Width="515" HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Canvas.Top="-10">
+            <Canvas Margin="0">
+                <Slider x:Name="rotation" Canvas.Left="10" VerticalContentAlignment="Center" BorderThickness="1" Height="24" Width="204" Canvas.Top="4" ValueChanged="floatProperty_ValueChanged" Maximum="360" Minimum="-1" SmallChange="1" Value="180"/>
+            </Canvas>
+        </GroupBox>
+        <GroupBox x:Name="palette" Header="GroupBox" HorizontalAlignment="Left" VerticalAlignment="Top" Height="441" Width="535" Canvas.Left="850" Canvas.Top="201" Panel.ZIndex="99">
+            <Canvas Margin="4">
+                <Image x:Name="image" MouseDown="samplePalette" Height="354" Canvas.Left="10" Width="405" MouseMove="paletteMove"/>
+                <Border x:Name="selectedColor" BorderBrush="Black" BorderThickness="1" Height="100" Width="100" Canvas.Left="415"/>
+                <StackPanel x:Name="colorStackPanel" Height="254" Canvas.Left="415" Canvas.Top="100" Width="100">
+                    <Canvas Height="24" Margin="0,4">
+                        <Label x:Name="label5" Content="Hue" Height="24"/>
+                        <TextBox x:Name="text_hue" Height="24" Canvas.Left="42" TextWrapping="Wrap" Text="0" Width="58" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="colorText_Changed"/>
+                    </Canvas>
+                    <Canvas Height="24" Margin="0,4">
+                        <Label x:Name="label6" Content="Sat" Height="24"/>
+                        <TextBox x:Name="text_sat" Height="24" Canvas.Left="42" TextWrapping="Wrap" Text="100" Width="58" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="colorText_Changed"/>
+                    </Canvas>
+                    <Canvas Height="24" Margin="0,4">
+                        <Label x:Name="label7" Content="V" Height="24"/>
+                        <TextBox x:Name="text_bright" Height="24" Canvas.Left="42" TextWrapping="Wrap" Text="100" Width="58" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="colorText_Changed"/>
+                    </Canvas>
+                    <Canvas Height="24" Margin="0,4">
+                        <Label x:Name="label8" Content="Red" Height="24"/>
+                        <TextBox x:Name="text_red" Height="24" Canvas.Left="42" TextWrapping="Wrap" Text="255" Width="58" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="colorText_Changed"/>
+                    </Canvas>
+                    <Canvas Height="24" Margin="0,4">
+                        <Label x:Name="label9" Content="Green" Height="24"/>
+                        <TextBox x:Name="text_green" Height="24" Canvas.Left="42" TextWrapping="Wrap" Text="0" Width="58" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="colorText_Changed"/>
+                    </Canvas>
+                    <Canvas Height="24" Margin="0,4">
+                        <Label x:Name="label10" Content="Blue" Height="24"/>
+                        <TextBox x:Name="text_blue" Height="24" Canvas.Left="42" TextWrapping="Wrap" Text="0" Width="58" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="colorText_Changed"/>
+                    </Canvas>
+                </StackPanel>
+            </Canvas>
+        </GroupBox>
+        <Button x:Name="button_Copy" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Height="30" Click="button_Click" BorderThickness="0,1" BorderBrush="#8C000000" Canvas.Top="5" Canvas.Left="130" Background="#FF9AFFBA">
+            <Label x:Name="label11" Content="Save.." FontWeight="Medium" FontFamily="Arial" FontSize="16" Background="{x:Null}" OpacityMask="#FF323030" Foreground="#FF6C6C6C"/>
+        </Button>
+        <Button x:Name="button1" Content="Import 3d model.." Click="button1_Click" Height="30" Background="#FF9AFFBA" Width="200" Canvas.Left="257" Canvas.Top="5"/>
+    </Canvas>
 </Window>
