@@ -48,7 +48,7 @@ namespace PriceManagerWPF
         public int[] faces { get; set; }
         public ThreeJsonMaterial[] materials { get; set; }
         public MetaData metadata { get; set; }
-
+        public ModelData modeldata { get; set; }
     }
 
     public class Material
@@ -117,6 +117,8 @@ namespace PriceManagerWPF
 
         public string ModelJsonData { get; set; }
         public string ModelFileName { get; set; }
+        public ThreeJsonModel JsonModel { get; set; }
+        public ThreeJsonMaterial JsonMaterial { get; set; }
 
         public ModelData()
         {

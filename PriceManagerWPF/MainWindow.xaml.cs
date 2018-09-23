@@ -15,6 +15,7 @@ using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Diagnostics;
 using System.Collections;
+using System.Reflection;
 
 namespace PriceManagerWPF
 {
@@ -81,7 +82,7 @@ namespace PriceManagerWPF
             lightControls.Visibility = Visibility.Hidden;
             browserContent.Visibility = Visibility.Hidden;
             palette.Visibility = Visibility.Hidden;
-            button1.Visibility = Visibility.Hidden;
+
             InitializeChromium();
 
             var col = new ColorWpf().FromHsv(0, 1, 1);
@@ -220,17 +221,14 @@ namespace PriceManagerWPF
 
         }
 
-        private void MaterialsFromFile(string content)
+        private void MaterialsFromFile(ThreeJsonMaterial[] materials)
         {
+            item.Materials = new Material[materials.Length];
 
-            ThreeJsonModel model = JsonConvert.DeserializeObject<ThreeJsonModel>(content);
-            item.Materials = new Material[model.metadata.materials];
-
-
-            for (int i = 0; i < item.Materials.Length; i++)
+            for (int i = 0; i < materials.Length; i++)
             {
                 var label = new Label();
-                label.Content = model.materials[i].DbgName;
+                label.Content = materials[i].DbgName;
                 listViewMaterials.Items.Add(label);
 
                 Material m = new Material();
@@ -240,17 +238,44 @@ namespace PriceManagerWPF
 
         }
 
+        private void ToggleBrowser(Visibility vis)
+        {
+                browserContent.Visibility = vis;
+                lightControls.Visibility = vis;
+
+        }
+
+        private void DisplayMaterials(Material[] materials)
+        {
+            ToggleBrowser(Visibility.Hidden);
+            if (materials != null && materials.Length > 0)
+            {
+                //ToggleBrowser(Visibility.Visible);
+                for (int i = 0; i < materials.Length; i++)
+                {
+                    var label = new Label();
+                    label.Content = materials[i].Name;
+                    listViewMaterials.Items.Add(label);
+                }
+            }
+
+
+        }
+
         public void PresentModelForm(ModelData item)
         {
 
-            textBoxName.Text = item.Name;
-            textBoxType.Text = item.Type;
+            textBox_base_Name.Text = item.Name;
+            textBox_base_Type.Text = item.Type;
 
-            textBoxAngle.Text = item.SizeData.AngleDeg.ToString();
-            textBoxDepth.Text = item.SizeData.Depth.ToString();
-            textBoxWidth.Text = item.SizeData.Width.ToString();
-            textBoxHeight.Text = item.SizeData.Height.ToString();
+            textBox_size_AngleDeg.Text = item.SizeData.AngleDeg.ToString();
+            textBox_size_Depth.Text = item.SizeData.Depth.ToString();
+            textBox_size_Width.Text = item.SizeData.Width.ToString();
+            textBox_size_Height.Text = item.SizeData.Height.ToString();
 
+            listViewMaterials.Items.Clear();
+
+            DisplayMaterials(item.Materials);
 
             switch (item.PriceData.Pricetype)
             {
@@ -275,32 +300,58 @@ namespace PriceManagerWPF
         private void controlTextChange(object sender, RoutedEventArgs e)
         {
 
-            ModelData model = Models[listView.SelectedIndex];
-            SizeData size = model.SizeData;
-
-            var t = (sender as TextBox);
-            string info = t.Name;
-            string propertyName = info.Split('_').Last();
-            string category = info.Split('_')[1];
-            string val = t.Text;
-
-            switch (category.ToLower())
+            if (IsLoaded)
             {
-                case "base":
-                    typeof(ModelData).GetProperty(propertyName).SetValue(model, val);
-                    break;
-                case "size":
-                    typeof(SizeData).GetProperty(propertyName).SetValue(size, val);
-                    break;
-                case "material":
-                    typeof(Material).GetProperty(propertyName).SetValue(model, val);
-                    break;
-                default:
-                    break;
+                ModelData model = item;
+                SizeData size = model.SizeData;
+
+                var t = (sender as TextBox);
+                string info = t.Name;
+                string propertyName = info.Split('_').Last();
+                string category = info.Split('_')[1];
+                string val = t.Text;
+
+                switch (category.ToLower())
+                {
+                    case "base":
+                        typeof(ModelData).GetProperty(propertyName).SetValue(model, val);
+
+                        if (propertyName == "Name")
+                        {
+                            (listView.SelectedItem as Label).Content = val;
+                        }
+                        break;
+                    case "size":
+                        PropertyInfo prop = typeof(SizeData).GetProperty(propertyName);
+                        Type type = prop.PropertyType;
+
+                        if (type == typeof(int))
+                        {
+                            prop.SetValue(size, int.Parse(val));
+                        }
+                        else if (type == typeof(float))
+                        {
+                            prop.SetValue(size, float.Parse(val));
+                        }
+
+                        else
+                        {
+                            prop.SetValue(size, val);
+                        }
+
+
+                        break;
+                    case "material":
+                        typeof(Material).GetProperty(propertyName).SetValue(model, val);
+                        break;
+                    default:
+                        break;
+                }
+
+
+
+
             }
-
-
-
 
 
         }
@@ -336,23 +387,14 @@ namespace PriceManagerWPF
             listView.Items.Add(label);
 
 
-            if (listView.SelectedIndex < 0)
+            if (listView.Items.Count > 0)
             {
-                listView.SelectedIndex = 0;
+                listView.SelectedIndex = listView.Items.Count - 1;
                 Keyboard.Focus(listView.SelectedItem as ListViewItem);
             }
 
         }
 
-        //Add new model
-        private void button_Click(object sender, RoutedEventArgs e)
-        {
-            ModelData model = new ModelData();
-            model.Name = "New Model";
-            model.Type = "none";
-
-            AddModel(model);
-        }
 
         //Modeldata selection changed
         private void listView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -369,19 +411,6 @@ namespace PriceManagerWPF
 
                 groupBox.Visibility = Visibility.Visible;
                 listBox.Visibility = Visibility.Visible;
-                button1.Visibility = Visibility.Visible;
-                if (!string.IsNullOrEmpty(item.ModelJsonData))
-                {
-                    //Item has data
-
-                    button1.Content = item.ModelFileName;
-                }
-                else
-                {
-
-                    button1.Content = "Import 3d model..";
-                }
-
             }
             else
             {
@@ -393,6 +422,11 @@ namespace PriceManagerWPF
         //Add json 3d model
         private void button1_Click(object sender, RoutedEventArgs e)
         {
+            ModelData model = new ModelData();
+            model.Name = "New Model";
+            model.Type = "none";
+
+            AddModel(model);
 
             OpenFileDialog dlg = new OpenFileDialog();
             dlg.Filter = "Json files (*.json)|*.json";
@@ -400,9 +434,6 @@ namespace PriceManagerWPF
             {
 
                 string input = File.ReadAllText(dlg.FileName);
-                MaterialsFromFile(input);
-
-                button1.Content = System.IO.Path.GetFileName(dlg.FileName);
 
 
                 listBox.Visibility = Visibility.Visible;
@@ -414,7 +445,14 @@ namespace PriceManagerWPF
                     (listView.SelectedItem as Label).Content = item.Name;
                     n = item.Name;
                     item.ModelJsonData = input;
-                    item.ModelFileName = (string)button1.Content;
+                    item.ModelFileName = Path.GetFileName(dlg.FileName);
+
+                    ThreeJsonModel modelB = JsonConvert.DeserializeObject<ThreeJsonModel>(input);
+                    MaterialsFromFile(modelB.materials);
+
+                    item.JsonModel = modelB;
+
+
                 }
                 catch (Exception)
                 {
@@ -422,7 +460,7 @@ namespace PriceManagerWPF
                     n = System.IO.Path.GetFileNameWithoutExtension(dlg.FileName);
                 }
 
-                textBoxName.Text = n;
+                textBox_base_Name.Text = n;
             }
         }
 
@@ -663,14 +701,7 @@ namespace PriceManagerWPF
                     col = new ColorWpf().FromHsv(float.Parse(fields[0].Text), float.Parse(fields[1].Text) / 100f, float.Parse(fields[2].Text) / 100f);
                     SetSelectedColor(col);
                 }
-
-
-
-
-
             }
-
-
         }
     }
 }
