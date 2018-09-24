@@ -24,7 +24,7 @@ namespace PriceManagerWPF
     /// </summary>
     public partial class MainWindow : Window
     {
-
+        public static bool isReady = false;
         public static ChromiumWebBrowser chromeBrowser;
         public static List<ModelData> Models = new List<ModelData>();
         public static ModelData item = null;
@@ -83,6 +83,8 @@ namespace PriceManagerWPF
             lightControls.Visibility = Visibility.Hidden;
             browserContent.Visibility = Visibility.Hidden;
             palette.Visibility = Visibility.Hidden;
+
+            this.DataContext = item;
 
             InitializeChromium();
 
@@ -203,6 +205,24 @@ namespace PriceManagerWPF
         public static List<Slider> materialSliders = new List<Slider>();
         public static List<Button> materialMaps = new List<Button>();
 
+        private void LoadPriceData()
+        {
+            string data = Controller.GenerateRequest("Home", "getPriceList", "GET", null);
+
+            List<ModelData> modeldata = JsonConvert.DeserializeObject<List<ModelData>>(data);
+
+
+            foreach (var model in modeldata)
+            {
+
+                textBox_base_Name.Text = model.Name;
+                AddModel(model);
+            }
+
+            listBox.Visibility = Visibility.Visible;
+
+        }
+
         private void mainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             foreach (TextBlock tb in FindVisualChildren<TextBlock>(mainWindow))
@@ -240,6 +260,9 @@ namespace PriceManagerWPF
                 }
 
             }
+
+            LoadPriceData();
+            isReady = true;
         }
 
         private void Border_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -320,7 +343,7 @@ namespace PriceManagerWPF
         private void controlTextChange(object sender, RoutedEventArgs e)
         {
 
-            if (IsLoaded)
+            if (isReady)
             {
                 ModelData model = item;
                 SizeData size = model.SizeData;
@@ -339,6 +362,7 @@ namespace PriceManagerWPF
                         if (propertyName == "Name")
                         {
                             (listView.SelectedItem as Label).Content = val;
+
                         }
                         break;
                     case "size":
@@ -405,11 +429,10 @@ namespace PriceManagerWPF
             label.Content = model.Name;
             listView.Items.Add(label);
 
-
             if (listView.Items.Count > 0)
             {
                 listView.SelectedIndex = listView.Items.Count - 1;
-              
+                item = Models[listView.SelectedIndex];
                 Keyboard.Focus(listView.SelectedItem as ListViewItem);
             }
 
@@ -572,7 +595,7 @@ namespace PriceManagerWPF
                     PropertyInfo property = typeof(Material).GetProperty(slider.Name);
                     Type type = property.GetType();
 
-                  
+
                     property.SetValue(material, (float)slider.Value);
                     chromeBrowser.ExecuteScriptAsync("setFloat", slider.Value, property.Name);
 
@@ -772,7 +795,7 @@ namespace PriceManagerWPF
 
             var input = (sender as TextBox);
 
-            if (!string.IsNullOrEmpty(input.Text) && this.IsLoaded)
+            if (!string.IsNullOrEmpty(input.Text) && isReady)
             {
                 string type = input.Name.Split('_')[1];
 
