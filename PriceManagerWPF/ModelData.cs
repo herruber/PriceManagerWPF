@@ -57,23 +57,30 @@ namespace PriceManagerWPF
         public string Name { get; set; }
 
         //Base64 strings
-        public string Map { get; set; }
-        public string NormalMap { get; set; }
-        public string RoughnessMap { get; set; }
-        public string DisplacementMap { get; set; }
+        public string map { get; set; }
+        public string normalMap { get; set; }
+        public string roughnessMap { get; set; }
+        public string displacementMap { get; set; }
 
-        public float[] Tiling { get; set; }
-        public float Roughness { get; set; }
-        public float Metalness { get; set; }
-        public float NormalScale { get; set; }
-        public float DisplacementScale { get; set; }
+        public float[] tiling { get; set; }
+        public float roughness { get; set; }
+        public float metalness { get; set; }
+        public float normalScale { get; set; }
+        public float displacementScale { get; set; }
 
 
         //If true and no reflectionMap = Use scene generated
         public bool UseReflections { get; set; }
         public string ReflectionMap { get; set; }
 
-
+        public Material()
+        {
+            tiling = new float[2] { 1, 1 };
+            roughness = 1;
+            metalness = 0;
+            normalScale = 1;
+            
+        }
     }
 
     public class PriceData
@@ -108,6 +115,7 @@ namespace PriceManagerWPF
     {
 
         public string Name { get; set; }
+        public List<string> OldNames { get; set; }
         public string Type { get; set; }
         public SizeData SizeData = new SizeData();
         public PriceData PriceData = new PriceData();

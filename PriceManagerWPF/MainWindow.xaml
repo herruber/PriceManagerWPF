@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:PriceManagerWPF"
         xmlns:System="clr-namespace:System;assembly=mscorlib" x:Name="mainWindow" x:Class="PriceManagerWPF.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="699" Width="1489" Loaded="mainWindow_Loaded" Background="#FFECECEC" Foreground="Black">
+        Title="MainWindow" Height="699" Width="1489" Loaded="mainWindow_Loaded" Background="#FFECECEC" Foreground="Black" Unloaded="window_Unloaded">
     <Canvas HorizontalAlignment="Left" Height="652" Margin="10,10,0,0" VerticalAlignment="Top" Width="1469">
         <ListView x:Name="listView" HorizontalAlignment="Left" Height="576" VerticalAlignment="Top" Width="205" Background="#FFECECEC" Canvas.Top="40" SelectionChanged="listView_SelectionChanged"/>
         <Button x:Name="button" HorizontalAlignment="Left" VerticalAlignment="Top" Width="125" Height="30" Click="button1_Click" BorderThickness="0,1" BorderBrush="#8C000000" Background="#FF9AFFBA" Canvas.Top="5">
@@ -83,30 +83,30 @@
 
                     <Label x:Name="label1" Content="Map" Height="54" Canvas.Left="60" Width="160"/>
                     <Border BorderBrush="Black" BorderThickness="0,0,0,1" Height="54" Width="230" Panel.ZIndex="-1"/>
-                    <Button x:Name="button2" Content="Add.." Width="54" Height="54" BorderBrush="#FF171616" Background="#FFFF6868" Click="imageButton_Click"/>
+                    <Button x:Name="map" Content="Add.." Width="54" Height="54" BorderBrush="#FF171616" Background="#FFFF6868" Click="imageButton_Click"/>
                 </Canvas>
                 <Canvas x:Name="groupNormal" Height="54" Margin="0,4">
                     <Slider x:Name="normalScale" Canvas.Left="60" Canvas.Top="26" Width="160" Maximum="1" Value="0.5" SmallChange="0.05" Panel.ZIndex="4" ValueChanged="floatProperty_ValueChanged"/>
-                    <Button x:Name="button2_Copy" Content="Add.." BorderBrush="#FF171616" Background="#FFFF6868" Click="imageButton_Click" Height="54" Width="54"/>
+                    <Button x:Name="normalMap" Content="Add.." BorderBrush="#FF171616" Background="#FFFF6868" Click="imageButton_Click" Height="54" Width="54"/>
                     <Label x:Name="label2" Content="Normal Map" Height="54" Canvas.Left="60" Width="160"/>
                     <Border BorderBrush="Black" BorderThickness="0,0,0,1" Height="54" Width="230" Panel.ZIndex="-1"/>
                 </Canvas>
                 <Canvas x:Name="groupRoughness" Height="54" Margin="0,4">
                     <Slider x:Name="roughness" Canvas.Left="60" Canvas.Top="26" Width="160" Maximum="1" Value="0.5" SmallChange="0.05" Panel.ZIndex="4" ValueChanged="floatProperty_ValueChanged"/>
-                    <Button x:Name="button2_Copy1" Content="Add.." BorderBrush="#FF171616" Background="#FFFF6868" Margin="0,0,176,-1" Click="imageButton_Click" Width="54" Height="54"/>
+                    <Button x:Name="roughnessMap" Content="Add.." BorderBrush="#FF171616" Background="#FFFF6868" Margin="0,0,176,-1" Click="imageButton_Click" Width="54" Height="54"/>
                     <Label x:Name="label3" Content="Roughness Map" Height="54" Canvas.Left="60" Width="160"/>
                     <Border BorderBrush="Black" BorderThickness="0,0,0,1" Height="54" Width="230" Panel.ZIndex="-1"/>
                 </Canvas>
                 <Canvas x:Name="groupDisplacement" Height="54" Margin="0,4">
                     <Slider x:Name="displacementScale" Canvas.Left="60" Canvas.Top="26" Width="160" Maximum="1" Value="0.5" SmallChange="0.05" Panel.ZIndex="4" ValueChanged="floatProperty_ValueChanged"/>
-                    <Button x:Name="button2_Copy2" Content="Add.." BorderBrush="#FF171616" Background="#FFFF6868" Margin="0,0,176,-1" Click="imageButton_Click" Width="54" Height="54"/>
+                    <Button x:Name="displacementMap" Content="Add.." BorderBrush="#FF171616" Background="#FFFF6868" Margin="0,0,176,-1" Click="imageButton_Click" Width="54" Height="54"/>
 
                     <Label x:Name="label4" Content="Displacement Map" Height="54" Canvas.Left="60" Width="160"/>
                     <Border BorderBrush="Black" BorderThickness="0,0,0,1" Height="54" Width="230" Panel.ZIndex="-1"/>
                 </Canvas>
                 <Canvas x:Name="groupMetalness" Height="54" Margin="0,4">
                     <Slider x:Name="metalness" Canvas.Left="60" Canvas.Top="26" Width="160" Maximum="1" Value="0.5" SmallChange="0.05" Panel.ZIndex="4" ValueChanged="floatProperty_ValueChanged"/>
-                    <Button x:Name="button2_Copy3" Content="Add.." BorderBrush="#FF171616" Background="#FFFF6868" Margin="0,0,176,-1" Click="imageButton_Click" Width="54" Height="54"/>
+                    <Button x:Name="metalnessMap" Content="Add.." BorderBrush="#FF171616" Background="#FFFF6868" Margin="0,0,176,-1" Click="imageButton_Click" Width="54" Height="54"/>
                     <Label x:Name="label12" Content="Metalness" Height="54" Canvas.Left="60" Width="160"/>
                     <Border BorderBrush="Black" BorderThickness="0,0,0,1" Height="54" Width="230" Panel.ZIndex="-1"/>
                 </Canvas>
@@ -149,7 +149,7 @@
                 </StackPanel>
             </Canvas>
         </GroupBox>
-        <Button x:Name="button_Copy" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Height="30" BorderThickness="0,1" BorderBrush="#8C000000" Canvas.Top="5" Canvas.Left="130" Background="#FF9AFFBA">
+        <Button x:Name="button_Copy" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Height="30" BorderThickness="0,1" BorderBrush="#8C000000" Canvas.Top="5" Canvas.Left="130" Background="#FF9AFFBA" Click="saveItems">
             <Label x:Name="label11" Content="Save.." FontWeight="Medium" FontFamily="Arial" FontSize="16" Background="{x:Null}" OpacityMask="#FF323030" Foreground="#FF6C6C6C"/>
         </Button>
     </Canvas>

@@ -31,6 +31,7 @@ namespace PriceManagerWPF
         public static Material material = null;
         public static int id = -1;
         public static int materialId = -1;
+        public static SolidColorBrush empty = new SolidColorBrush(Colors.MediumVioletRed);
 
         public static ScriptManager manager;
         [ComVisible(true)] //Visible to the js
@@ -199,6 +200,9 @@ namespace PriceManagerWPF
 
         }
 
+        public static List<Slider> materialSliders = new List<Slider>();
+        public static List<Button> materialMaps = new List<Button>();
+
         private void mainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             foreach (TextBlock tb in FindVisualChildren<TextBlock>(mainWindow))
@@ -213,6 +217,28 @@ namespace PriceManagerWPF
                 brush.Color = col;
 
                 tb.Background = brush;
+            }
+
+            foreach (Slider slider in FindVisualChildren<Slider>(mainWindow))
+            {
+
+                //If material slider
+                if (materialPanel.Children.IndexOf((slider.Parent as Canvas)) > -1)
+                {
+                    materialSliders.Add(slider);
+                }
+
+            }
+
+            foreach (Button btn in FindVisualChildren<Button>(mainWindow))
+            {
+
+                //If material slider
+                if (materialPanel.Children.IndexOf((btn.Parent as Canvas)) > -1)
+                {
+                    materialMaps.Add(btn);
+                }
+
             }
         }
 
@@ -258,8 +284,6 @@ namespace PriceManagerWPF
                     listViewMaterials.Items.Add(label);
                 }
             }
-
-
         }
 
         public void PresentModelForm(ModelData item)
@@ -291,10 +315,6 @@ namespace PriceManagerWPF
                 default:
                     break;
             }
-
-
-
-
         }
 
         private void controlTextChange(object sender, RoutedEventArgs e)
@@ -325,6 +345,11 @@ namespace PriceManagerWPF
                         PropertyInfo prop = typeof(SizeData).GetProperty(propertyName);
                         Type type = prop.PropertyType;
 
+                        if (val == null || val == "")
+                        {
+                            return;
+                        }
+
                         if (type == typeof(int))
                         {
                             prop.SetValue(size, int.Parse(val));
@@ -347,13 +372,7 @@ namespace PriceManagerWPF
                     default:
                         break;
                 }
-
-
-
-
             }
-
-
         }
 
         WrapPanel AddProperty(string name, string targetProperty, Control control)
@@ -390,6 +409,7 @@ namespace PriceManagerWPF
             if (listView.Items.Count > 0)
             {
                 listView.SelectedIndex = listView.Items.Count - 1;
+              
                 Keyboard.Focus(listView.SelectedItem as ListViewItem);
             }
 
@@ -430,6 +450,7 @@ namespace PriceManagerWPF
 
             OpenFileDialog dlg = new OpenFileDialog();
             dlg.Filter = "Json files (*.json)|*.json";
+
             if (dlg.ShowDialog() == true)
             {
 
@@ -514,6 +535,9 @@ namespace PriceManagerWPF
             if (dlg.ShowDialog() == true)
             {
 
+
+                PropertyInfo property = typeof(Material).GetProperty(mapType);
+
                 ImageSource imageSource = new BitmapImage(new Uri(dlg.FileName));
 
                 ImageBrush b = new ImageBrush();
@@ -526,10 +550,11 @@ namespace PriceManagerWPF
 
                 var path = dlg.FileName;
 
-                var json = Convert.ToBase64String(File.ReadAllBytes(dlg.FileName));
+                var base64 = Convert.ToBase64String(File.ReadAllBytes(dlg.FileName));
 
+                property.SetValue(material, base64);
 
-                chromeBrowser.ExecuteScriptAsync("setTexture", json, mapType);
+                chromeBrowser.ExecuteScriptAsync("setTexture", base64, mapType);
             }
 
         }
@@ -538,12 +563,75 @@ namespace PriceManagerWPF
         {
             Slider slider = (sender as Slider);
 
+
             if (chromeBrowser != null)
             {
-                chromeBrowser.ExecuteScriptAsync("setFloat", (float)slider.Value, slider.Name);
+
+                if (slider.Name != "rotation")
+                {
+                    PropertyInfo property = typeof(Material).GetProperty(slider.Name);
+                    Type type = property.GetType();
+
+                  
+                    property.SetValue(material, (float)slider.Value);
+                    chromeBrowser.ExecuteScriptAsync("setFloat", slider.Value, property.Name);
+
+
+                }
+                else
+                {
+                    chromeBrowser.ExecuteScriptAsync("setFloat", slider.Value, "rotation");
+                }
+            }
+        }
+
+        private void PresentMaterial()
+        {
+            foreach (var slider in materialSliders)
+            {
+
+                var prop = typeof(Material).GetProperty(slider.Name);
+
+                if (prop != null)
+                {
+
+                    double value = 0;
+                    double.TryParse(prop.GetValue(material).ToString(), out value);
+                    slider.Value = value;
+                }
 
             }
 
+            foreach (var map in materialMaps)
+            {
+                var prop = typeof(Material).GetProperty(map.Name);
+
+                if (prop != null)
+                {
+
+                    var value = prop.GetValue(material);
+
+                    if (value == null)
+                    {
+                        map.Background = empty;
+                    }
+                    else
+                    {
+
+                        byte[] binaryData = Convert.FromBase64String(value.ToString());
+
+                        BitmapImage bi = new BitmapImage();
+                        bi.BeginInit();
+                        bi.StreamSource = new MemoryStream(binaryData);
+                        bi.EndInit();
+
+                        ImageBrush brush = new ImageBrush(bi);
+
+
+                        map.Background = brush;
+                    }
+                }
+            }
         }
 
         private void materialList_Changed(object sender, SelectionChangedEventArgs e)
@@ -554,6 +642,8 @@ namespace PriceManagerWPF
             if (materialId > -1)
             {
                 material = item.Materials[materialId];
+                PresentMaterial();
+                chromeBrowser.ExecuteScriptAsync("setMaterial", JsonConvert.SerializeObject(material));
                 materialDisplay.Visibility = Visibility.Visible;
             }
             else
@@ -702,6 +792,18 @@ namespace PriceManagerWPF
                     SetSelectedColor(col);
                 }
             }
+        }
+
+        private void saveItems(object sender, RoutedEventArgs e)
+        {
+
+            Controller.GenerateRequest("Home", "SavePriceList", "POST", Models);
+
+        }
+
+        private void window_Unloaded(object sender, RoutedEventArgs e)
+        {
+            Cef.Shutdown();
         }
     }
 }
