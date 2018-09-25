@@ -31,9 +31,8 @@ namespace PriceManagerWPF
 
         //public ModelData item { get; set; }
 
-        public static Material material = null;
         public static int id = -1;
-        public static int materialId = -1;
+
         public static SolidColorBrush empty = new SolidColorBrush(Colors.MediumVioletRed);
 
         public static ScriptManager manager;
@@ -129,7 +128,7 @@ namespace PriceManagerWPF
             viewModel = new MainViewModel();
             SetSelectedColor(col);
             BitmapImage img = new BitmapImage();
-            
+
             double dpi = 96;
             int width = 257;
             int height = 257;
@@ -233,32 +232,9 @@ namespace PriceManagerWPF
 
         }
 
-        private void PopulateItems()
-        {
-
-
-
-        }
-
-        public static List<Slider> materialSliders = new List<Slider>();
-        public static List<Button> materialMaps = new List<Button>();
-
         private void mainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            foreach (TextBlock tb in FindVisualChildren<TextBlock>(mainWindow))
-            {
 
-                SolidColorBrush brush = new SolidColorBrush();
-                var col = new Color();
-
-                col.R = 154;
-                col.G = 255;
-                col.B = 186;
-                brush.Color = col;
-
-                tb.Background = brush;
-            }
-            
         }
 
         private void Border_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -268,7 +244,7 @@ namespace PriceManagerWPF
 
         private void MaterialsFromFile(ThreeJsonMaterial[] materials, ModelData model)
         {
-            
+
             model.Materials = new Material[materials.Length];
 
             for (int i = 0; i < materials.Length; i++)
@@ -370,11 +346,13 @@ namespace PriceManagerWPF
             Models.Add(model);
             var label = new Label();
 
-            //Binding binding = new Binding();
-            //binding.Path = new PropertyPath("Name");
-            //binding.Source = model;
+            Binding binding = new Binding();
+            binding.Path = new PropertyPath("Name");
+            binding.Mode = BindingMode.TwoWay;
+            binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            binding.Source = model;
 
-            //label.SetBinding(ContentProperty, binding);
+            label.SetBinding(ContentProperty, binding);
 
             label.Content = model.Name;
 
@@ -385,7 +363,7 @@ namespace PriceManagerWPF
             if (listView.Items.Count > 0)
             {
                 listView.SelectedIndex = listView.Items.Count - 1;
-              
+
                 Keyboard.Focus(listView.SelectedItem as ListViewItem);
             }
 
@@ -393,14 +371,29 @@ namespace PriceManagerWPF
 
         private void UpdateBindings()
         {
+
             DataContext = null;
 
-            var materials = viewModel.Item.Materials;
-            viewModel.Item.Materials = null;
-
+            listViewMaterials.Items.Clear();
             DataContext = viewModel;
 
-            viewModel.Item.Materials = materials;
+
+            foreach (var mat in viewModel.Item.Materials)
+            {
+
+                Label label = new Label();
+                label.Content = mat.Name;
+
+                Binding binding = new Binding();
+                binding.Path = new PropertyPath("Name");
+                binding.Mode = BindingMode.TwoWay;
+                binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                binding.Source = mat;
+
+                listViewMaterials.Items.Add(label);
+            }
+
+
         }
 
 
@@ -476,7 +469,7 @@ namespace PriceManagerWPF
         private void comboBoxPriceType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
-           
+
         }
 
         private void imageButton_Click(object sender, RoutedEventArgs e)
@@ -523,7 +516,7 @@ namespace PriceManagerWPF
 
                 var base64 = Convert.ToBase64String(File.ReadAllBytes(dlg.FileName));
 
-                property.SetValue(material, base64);
+                property.SetValue(viewModel.material, base64);
 
                 chromeBrowser.ExecuteScriptAsync("setTexture", base64, mapType);
             }
@@ -543,8 +536,8 @@ namespace PriceManagerWPF
                     PropertyInfo property = typeof(Material).GetProperty(slider.Name);
                     Type type = property.GetType();
 
-                  
-                    property.SetValue(material, (float)slider.Value);
+
+                    property.SetValue(viewModel.material, (float)slider.Value);
                     chromeBrowser.ExecuteScriptAsync("setFloat", slider.Value, property.Name);
 
 
@@ -556,65 +549,16 @@ namespace PriceManagerWPF
             }
         }
 
-        private void PresentMaterial()
-        {
-            foreach (var slider in materialSliders)
-            {
-
-                var prop = typeof(Material).GetProperty(slider.Name);
-
-                if (prop != null)
-                {
-
-                    double value = 0;
-                    double.TryParse(prop.GetValue(material).ToString(), out value);
-                    slider.Value = value;
-                }
-
-            }
-
-            foreach (var map in materialMaps)
-            {
-                var prop = typeof(Material).GetProperty(map.Name);
-
-                if (prop != null)
-                {
-
-                    var value = prop.GetValue(material);
-
-                    if (value == null)
-                    {
-                        map.Background = empty;
-                    }
-                    else
-                    {
-
-                        byte[] binaryData = Convert.FromBase64String(value.ToString());
-
-                        BitmapImage bi = new BitmapImage();
-                        bi.BeginInit();
-                        bi.StreamSource = new MemoryStream(binaryData);
-                        bi.EndInit();
-
-                        ImageBrush brush = new ImageBrush(bi);
-
-
-                        map.Background = brush;
-                    }
-                }
-            }
-        }
-
         private void materialList_Changed(object sender, SelectionChangedEventArgs e)
         {
 
-            materialId = listViewMaterials.SelectedIndex;
+            viewModel.materialId = listViewMaterials.SelectedIndex;
 
-            if (materialId > -1)
+            if (viewModel.materialId > -1)
             {
-                material = viewModel.Item.Materials[materialId];
-                PresentMaterial();
-                chromeBrowser.ExecuteScriptAsync("setMaterial", JsonConvert.SerializeObject(material));
+                viewModel.material = viewModel.Item.Materials[viewModel.materialId];
+                UpdateBindings();
+                chromeBrowser.ExecuteScriptAsync("setMaterial", JsonConvert.SerializeObject(viewModel.material));
                 materialDisplay.Visibility = Visibility.Visible;
             }
             else
@@ -622,7 +566,7 @@ namespace PriceManagerWPF
                 materialDisplay.Visibility = Visibility.Hidden;
             }
 
-            if (material != null)
+            if (viewModel.material != null)
             {
                 lightControls.Visibility = Visibility.Visible;
                 browserContent.Visibility = Visibility.Visible;

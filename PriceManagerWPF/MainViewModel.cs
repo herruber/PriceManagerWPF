@@ -8,6 +8,8 @@ namespace PriceManagerWPF
 {
     public class MainViewModel
     {
+        public int materialId { get; set; }
+        public Material material { get; set; }
         public ModelData Item { get; set; }
 
     }

@@ -53,7 +53,7 @@
                     </Grid>
                 </Expander>
                 <Expander x:Name="exp_mat" Header="Materials" IsExpanded="True" BorderBrush="Black" BorderThickness="0,0,0,1" Width="239">
-                    <ListView x:Name="listViewMaterials" ItemsSource="{Binding Item.Materials}" Width="239" SelectionChanged="materialList_Changed"/>
+                    <ListView x:Name="listViewMaterials" Width="239" SelectionChanged="materialList_Changed"/>
                 </Expander>
                 <Expander x:Name="exp_size_Copy" Header="Price" BorderBrush="Black" BorderThickness="0,0,0,1" Width="239">
                     <Grid Background="#FFE5E5E5">
@@ -83,11 +83,10 @@
         <GroupBox x:Name="materialDisplay" Header="Material" Canvas.Left="510" Canvas.Top="40" BorderBrush="#BF5B6E7A" BorderThickness="1" Width="285" Height="435" Background="#FFECECEC">
             <StackPanel x:Name="materialPanel" Background="White" Margin="4,10" CanVerticallyScroll="True">
                 <Canvas x:Name="groupMap" Height="54" Margin="0,4">
-                    <Slider x:Name="slider" Canvas.Left="60" Canvas.Top="26" Width="160" Maximum="1" Value="0.5" SmallChange="0.05" Panel.ZIndex="4" Foreground="#FFC8C8C8" Style="{DynamicResource SliderStyle1}" />
 
-                    <Label x:Name="label1" Content="Map" Height="54" Canvas.Left="60" Width="160"/>
+                    <Label x:Name="label1" Content="Name" Height="54" Width="265" HorizontalContentAlignment="Center"/>
                     <Border BorderBrush="Black" BorderThickness="0,0,0,1" Height="54" Width="230" Panel.ZIndex="-1"/>
-                    <Button x:Name="map" Content="Add.." Width="54" Height="54" BorderBrush="#FF171616" Background="#FFFF6868" Click="imageButton_Click"/>
+                    <TextBox x:Name="materialName" Height="23" Text="{Binding material.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" Canvas.Top="26" Width="265" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                 </Canvas>
                 <Canvas x:Name="groupNormal" Height="54" Margin="0,4">
                     <Slider x:Name="normalScale" Canvas.Left="60" Canvas.Top="26" Width="160" Maximum="1" Value="0.5" SmallChange="0.05" Panel.ZIndex="4" ValueChanged="floatProperty_ValueChanged"/>
@@ -113,6 +112,13 @@
                     <Button x:Name="metalnessMap" Content="Add.." BorderBrush="#FF171616" Background="#FFFF6868" Margin="0,0,176,-1" Click="imageButton_Click" Width="54" Height="54"/>
                     <Label x:Name="label12" Content="Metalness" Height="54" Canvas.Left="60" Width="160"/>
                     <Border BorderBrush="Black" BorderThickness="0,0,0,1" Height="54" Width="230" Panel.ZIndex="-1"/>
+                </Canvas>
+                <Canvas x:Name="groupMap_Copy" Height="54" Margin="0,4">
+                    <Slider x:Name="slider1" Canvas.Left="60" Canvas.Top="26" Width="160" Maximum="1" Value="0.5" SmallChange="0.05" Panel.ZIndex="4" Foreground="#FFC8C8C8" Style="{DynamicResource SliderStyle1}" />
+
+                    <Label x:Name="label13" Content="Map" Height="54" Canvas.Left="60" Width="160"/>
+                    <Border BorderBrush="Black" BorderThickness="0,0,0,1" Height="54" Width="230" Panel.ZIndex="-1"/>
+                    <Button x:Name="map1" Content="Add.." Width="54" Height="54" BorderBrush="#FF171616" Background="#FFFF6868" Click="imageButton_Click"/>
                 </Canvas>
             </StackPanel>
         </GroupBox>
