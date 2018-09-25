@@ -16,6 +16,7 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Collections;
 using System.Reflection;
+using System.Windows.Data;
 
 namespace PriceManagerWPF
 {
@@ -27,7 +28,9 @@ namespace PriceManagerWPF
 
         public static ChromiumWebBrowser chromeBrowser;
         public static List<ModelData> Models = new List<ModelData>();
-        public static ModelData item = null;
+
+        //public ModelData item { get; set; }
+
         public static Material material = null;
         public static int id = -1;
         public static int materialId = -1;
@@ -45,6 +48,7 @@ namespace PriceManagerWPF
             }
 
         }
+
 
         public ColorWpf GetPixelColor(Point p)
         {
@@ -75,8 +79,42 @@ namespace PriceManagerWPF
 
         }
 
+        private void SetBindings()
+        {
+        //    public string Name { get; set; }
+
+        ////Base64 strings
+        //public string map { get; set; }
+        //public string normalMap { get; set; }
+        //public string roughnessMap { get; set; }
+        //public string displacementMap { get; set; }
+
+        //public float[] tiling { get; set; }
+        //public float roughness { get; set; }
+        //public float metalness { get; set; }
+        //public float normalScale { get; set; }
+        //public float displacementScale { get; set; }
+
+
+        //Bindings.Add(typeof(ModelData).GetProperty("Name"), textBox_base_Name);
+        //    Bindings.Add(typeof(ModelData).GetProperty("Type"), textBox_base_Type);
+
+        //    Bindings.Add(typeof(SizeData).GetProperty("AngleDeg"), textBox_size_AngleDeg);
+        //    Bindings.Add(typeof(SizeData).GetProperty("Width"), textBox_size_Width);
+        //    Bindings.Add(typeof(SizeData).GetProperty("Height"), textBox_size_Height);
+        //    Bindings.Add(typeof(SizeData).GetProperty("Depth"), textBox_size_Depth);
+
+        //    Bindings.Add(typeof(PriceData).GetProperty("Discount"), textBox_price_Discount);
+        //    Bindings.Add(typeof(PriceData).GetProperty("Price"), textBox_price_Price);
+
+        //    //Bindings.Add(typeof(Material).GetProperty("Discount"), textbox);
+        }
+
+        public static MainViewModel viewModel;
+
         public MainWindow()
         {
+
             InitializeComponent();
             groupBox.Visibility = Visibility.Hidden;
             materialDisplay.Visibility = Visibility.Hidden;
@@ -85,11 +123,13 @@ namespace PriceManagerWPF
             palette.Visibility = Visibility.Hidden;
 
             InitializeChromium();
+            SetBindings();
 
             var col = new ColorWpf().FromHsv(0, 1, 1);
+            viewModel = new MainViewModel();
             SetSelectedColor(col);
             BitmapImage img = new BitmapImage();
-
+            
             double dpi = 96;
             int width = 257;
             int height = 257;
@@ -218,28 +258,7 @@ namespace PriceManagerWPF
 
                 tb.Background = brush;
             }
-
-            foreach (Slider slider in FindVisualChildren<Slider>(mainWindow))
-            {
-
-                //If material slider
-                if (materialPanel.Children.IndexOf((slider.Parent as Canvas)) > -1)
-                {
-                    materialSliders.Add(slider);
-                }
-
-            }
-
-            foreach (Button btn in FindVisualChildren<Button>(mainWindow))
-            {
-
-                //If material slider
-                if (materialPanel.Children.IndexOf((btn.Parent as Canvas)) > -1)
-                {
-                    materialMaps.Add(btn);
-                }
-
-            }
+            
         }
 
         private void Border_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -247,9 +266,10 @@ namespace PriceManagerWPF
 
         }
 
-        private void MaterialsFromFile(ThreeJsonMaterial[] materials)
+        private void MaterialsFromFile(ThreeJsonMaterial[] materials, ModelData model)
         {
-            item.Materials = new Material[materials.Length];
+            
+            model.Materials = new Material[materials.Length];
 
             for (int i = 0; i < materials.Length; i++)
             {
@@ -259,7 +279,7 @@ namespace PriceManagerWPF
 
                 Material m = new Material();
                 m.Name = (string)label.Content;
-                item.Materials[i] = m;
+                model.Materials[i] = m;
             }
 
         }
@@ -289,90 +309,37 @@ namespace PriceManagerWPF
         public void PresentModelForm(ModelData item)
         {
 
-            textBox_base_Name.Text = item.Name;
-            textBox_base_Type.Text = item.Type;
+            //textBox_base_Name.Text = item.Name;
+            //textBox_base_Type.Text = item.Type;
 
-            textBox_size_AngleDeg.Text = item.SizeData.AngleDeg.ToString();
-            textBox_size_Depth.Text = item.SizeData.Depth.ToString();
-            textBox_size_Width.Text = item.SizeData.Width.ToString();
-            textBox_size_Height.Text = item.SizeData.Height.ToString();
+            //textBox_size_AngleDeg.Text = item.SizeData.AngleDeg.ToString();
+            //textBox_size_Depth.Text = item.SizeData.Depth.ToString();
+            //textBox_size_Width.Text = item.SizeData.Width.ToString();
+            //textBox_size_Height.Text = item.SizeData.Height.ToString();
 
-            listViewMaterials.Items.Clear();
+            //listViewMaterials.Items.Clear();
 
-            DisplayMaterials(item.Materials);
+            //DisplayMaterials(item.Materials);
 
-            switch (item.PriceData.Pricetype)
-            {
-                case PriceData.PriceType.Sqm:
-                    comboBoxPriceType.SelectedIndex = 2;
-                    break;
-                case PriceData.PriceType.M:
-                    comboBoxPriceType.SelectedIndex = 1;
-                    break;
-                case PriceData.PriceType.Unit:
-                    comboBoxPriceType.SelectedIndex = 0;
-                    break;
-                default:
-                    break;
-            }
+            //switch (item.PriceData.Pricetype)
+            //{
+            //    case PriceData.PriceType.Sqm:
+            //        comboBoxPriceType.SelectedIndex = 2;
+            //        break;
+            //    case PriceData.PriceType.M:
+            //        comboBoxPriceType.SelectedIndex = 1;
+            //        break;
+            //    case PriceData.PriceType.Unit:
+            //        comboBoxPriceType.SelectedIndex = 0;
+            //        break;
+            //    default:
+            //        break;
+            //}
         }
 
         private void controlTextChange(object sender, RoutedEventArgs e)
         {
 
-            if (IsLoaded)
-            {
-                ModelData model = item;
-                SizeData size = model.SizeData;
-
-                var t = (sender as TextBox);
-                string info = t.Name;
-                string propertyName = info.Split('_').Last();
-                string category = info.Split('_')[1];
-                string val = t.Text;
-
-                switch (category.ToLower())
-                {
-                    case "base":
-                        typeof(ModelData).GetProperty(propertyName).SetValue(model, val);
-
-                        if (propertyName == "Name")
-                        {
-                            (listView.SelectedItem as Label).Content = val;
-                        }
-                        break;
-                    case "size":
-                        PropertyInfo prop = typeof(SizeData).GetProperty(propertyName);
-                        Type type = prop.PropertyType;
-
-                        if (val == null || val == "")
-                        {
-                            return;
-                        }
-
-                        if (type == typeof(int))
-                        {
-                            prop.SetValue(size, int.Parse(val));
-                        }
-                        else if (type == typeof(float))
-                        {
-                            prop.SetValue(size, float.Parse(val));
-                        }
-
-                        else
-                        {
-                            prop.SetValue(size, val);
-                        }
-
-
-                        break;
-                    case "material":
-                        typeof(Material).GetProperty(propertyName).SetValue(model, val);
-                        break;
-                    default:
-                        break;
-                }
-            }
         }
 
         WrapPanel AddProperty(string name, string targetProperty, Control control)
@@ -402,9 +369,18 @@ namespace PriceManagerWPF
         {
             Models.Add(model);
             var label = new Label();
+
+            //Binding binding = new Binding();
+            //binding.Path = new PropertyPath("Name");
+            //binding.Source = model;
+
+            //label.SetBinding(ContentProperty, binding);
+
             label.Content = model.Name;
+
             listView.Items.Add(label);
 
+            viewModel.Item = model;
 
             if (listView.Items.Count > 0)
             {
@@ -415,6 +391,18 @@ namespace PriceManagerWPF
 
         }
 
+        private void UpdateBindings()
+        {
+            DataContext = null;
+
+            var materials = viewModel.Item.Materials;
+            viewModel.Item.Materials = null;
+
+            DataContext = viewModel;
+
+            viewModel.Item.Materials = materials;
+        }
+
 
         //Modeldata selection changed
         private void listView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -422,12 +410,14 @@ namespace PriceManagerWPF
 
 
             id = listView.SelectedIndex;
-            item = Models[id];
 
-
-            if (item != null)
+            if (viewModel.Item != null)
             {
-                PresentModelForm(item);
+                viewModel.Item = Models[id];
+
+                UpdateBindings();
+
+                //PresentModelForm(item);
 
                 groupBox.Visibility = Visibility.Visible;
                 listBox.Visibility = Visibility.Visible;
@@ -442,11 +432,10 @@ namespace PriceManagerWPF
         //Add json 3d model
         private void button1_Click(object sender, RoutedEventArgs e)
         {
+
             ModelData model = new ModelData();
             model.Name = "New Model";
             model.Type = "none";
-
-            AddModel(model);
 
             OpenFileDialog dlg = new OpenFileDialog();
             dlg.Filter = "Json files (*.json)|*.json";
@@ -456,22 +445,20 @@ namespace PriceManagerWPF
 
                 string input = File.ReadAllText(dlg.FileName);
 
-
                 listBox.Visibility = Visibility.Visible;
+
                 string n = "";
                 try
                 {
 
-                    item.Name = System.IO.Path.GetFileNameWithoutExtension(dlg.FileName);
-                    (listView.SelectedItem as Label).Content = item.Name;
-                    n = item.Name;
-                    item.ModelJsonData = input;
-                    item.ModelFileName = Path.GetFileName(dlg.FileName);
+                    model.Name = Path.GetFileNameWithoutExtension(dlg.FileName);
+                    model.ModelJsonData = input;
+                    model.ModelFileName = Path.GetFileName(dlg.FileName);
 
                     ThreeJsonModel modelB = JsonConvert.DeserializeObject<ThreeJsonModel>(input);
-                    MaterialsFromFile(modelB.materials);
+                    MaterialsFromFile(modelB.materials, model);
 
-                    item.JsonModel = modelB;
+                    model.JsonModel = modelB;
 
 
                 }
@@ -481,28 +468,15 @@ namespace PriceManagerWPF
                     n = System.IO.Path.GetFileNameWithoutExtension(dlg.FileName);
                 }
 
-                textBox_base_Name.Text = n;
             }
+
+            AddModel(model);
         }
 
         private void comboBoxPriceType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
-            switch (comboBoxPriceType.SelectedIndex)
-            {
-                case 0:
-                    item.PriceData.Pricetype = PriceData.PriceType.Unit;
-                    break;
-                case 1:
-                    item.PriceData.Pricetype = PriceData.PriceType.M;
-                    break;
-                case 2:
-                    item.PriceData.Pricetype = PriceData.PriceType.Sqm;
-                    break;
-                default:
-                    break;
-            }
-
+           
         }
 
         private void imageButton_Click(object sender, RoutedEventArgs e)
@@ -544,9 +518,6 @@ namespace PriceManagerWPF
                 b.ImageSource = imageSource;
 
                 btn.Background = b;
-
-
-                byte[] data;
 
                 var path = dlg.FileName;
 
@@ -641,7 +612,7 @@ namespace PriceManagerWPF
 
             if (materialId > -1)
             {
-                material = item.Materials[materialId];
+                material = viewModel.Item.Materials[materialId];
                 PresentMaterial();
                 chromeBrowser.ExecuteScriptAsync("setMaterial", JsonConvert.SerializeObject(material));
                 materialDisplay.Visibility = Visibility.Visible;

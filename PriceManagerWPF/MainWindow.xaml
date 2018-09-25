@@ -6,7 +6,11 @@
         xmlns:local="clr-namespace:PriceManagerWPF"
         xmlns:System="clr-namespace:System;assembly=mscorlib" x:Name="mainWindow" x:Class="PriceManagerWPF.MainWindow"
         mc:Ignorable="d"
+
         Title="MainWindow" Height="699" Width="1489" Loaded="mainWindow_Loaded" Background="#FFECECEC" Foreground="Black" Unloaded="window_Unloaded">
+    <Window.DataContext>
+        <local:MainViewModel />
+    </Window.DataContext>
     <Canvas HorizontalAlignment="Left" Height="652" Margin="10,10,0,0" VerticalAlignment="Top" Width="1469">
         <ListView x:Name="listView" HorizontalAlignment="Left" Height="576" VerticalAlignment="Top" Width="205" Background="#FFECECEC" Canvas.Top="40" SelectionChanged="listView_SelectionChanged"/>
         <Button x:Name="button" HorizontalAlignment="Left" VerticalAlignment="Top" Width="125" Height="30" Click="button1_Click" BorderThickness="0,1" BorderBrush="#8C000000" Background="#FF9AFFBA" Canvas.Top="5">
@@ -18,11 +22,11 @@
                     <ListBox x:Name="listBox1" Background="#FFECECEC">
                         <WrapPanel Height="29">
                             <TextBlock x:Name="textBlock" TextWrapping="Wrap" Text="Name:" Height="20" Width="80"/>
-                            <TextBox x:Name="textBox_base_Name" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..." Background="#FF9AFFBA" TextChanged="controlTextChange"/>
+                            <TextBox x:Name="textBox_base_Name" Text="{Binding Item.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..." Background="#FF9AFFBA"/>
                         </WrapPanel>
                         <WrapPanel Height="29">
                             <TextBlock x:Name="textBlock1" TextWrapping="Wrap" Text="Type:" Height="20" Width="80"/>
-                            <TextBox x:Name="textBox_base_Type" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..." Background="#FF9AFFBA" TextChanged="controlTextChange"/>
+                            <TextBox x:Name="textBox_base_Type" Text="{Binding Item.Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..." Background="#FF9AFFBA"/>
                         </WrapPanel>
                     </ListBox>
                 </Expander>
@@ -31,44 +35,44 @@
                         <ListBox x:Name="listBox1_Copy">
                             <WrapPanel Height="29">
                                 <TextBlock x:Name="textBlock2" TextWrapping="Wrap" Text="Width:" Height="20" Width="80"/>
-                                <TextBox x:Name="textBox_size_Width" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..." TextChanged="controlTextChange"/>
+                                <TextBox x:Name="textBox_size_Width" Text="{Binding Item.SizeData.Width, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..." TextChanged="controlTextChange"/>
                             </WrapPanel>
                             <WrapPanel Height="29">
                                 <TextBlock x:Name="textBlock3" TextWrapping="Wrap" Text="Height:" Height="20" Width="80"/>
-                                <TextBox x:Name="textBox_size_Height" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..." TextChanged="controlTextChange"/>
+                                <TextBox x:Name="textBox_size_Height" Text="{Binding Item.SizeData.Height, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..." TextChanged="controlTextChange"/>
                             </WrapPanel>
                             <WrapPanel Height="29">
                                 <TextBlock x:Name="textBlock4" TextWrapping="Wrap" Text="Depth:" Height="20" Width="80"/>
-                                <TextBox x:Name="textBox_size_Depth" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..." TextChanged="controlTextChange"/>
+                                <TextBox x:Name="textBox_size_Depth" Text="{Binding Item.SizeData.Depth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..." TextChanged="controlTextChange"/>
                             </WrapPanel>
                             <WrapPanel Height="29">
                                 <TextBlock x:Name="textBlock5" TextWrapping="Wrap" Text="Angle:" Height="20" Width="80"/>
-                                <TextBox x:Name="textBox_size_AngleDeg" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..." TextChanged="controlTextChange"/>
+                                <TextBox x:Name="textBox_size_AngleDeg" Text="{Binding Item.SizeData.AngleDeg, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..." TextChanged="controlTextChange"/>
                             </WrapPanel>
                         </ListBox>
                     </Grid>
                 </Expander>
                 <Expander x:Name="exp_mat" Header="Materials" IsExpanded="True" BorderBrush="Black" BorderThickness="0,0,0,1" Width="239">
-                    <ListView x:Name="listViewMaterials" Width="239" SelectionChanged="materialList_Changed"/>
+                    <ListView x:Name="listViewMaterials" ItemsSource="{Binding Item.Materials}" Width="239" SelectionChanged="materialList_Changed"/>
                 </Expander>
                 <Expander x:Name="exp_size_Copy" Header="Price" BorderBrush="Black" BorderThickness="0,0,0,1" Width="239">
                     <Grid Background="#FFE5E5E5">
                         <ListBox x:Name="listBox1_Copy1">
                             <WrapPanel Height="29">
                                 <TextBlock x:Name="textBlock6" TextWrapping="Wrap" Text="Price Type:" Height="20" Width="80"/>
-                                <ComboBox x:Name="comboBoxPriceType" Width="120" SelectionChanged="comboBoxPriceType_SelectionChanged">
-                                    <ComboBoxItem Content="Unit" HorizontalAlignment="Left" Width="118"/>
+                                <ComboBox x:Name="comboBoxPriceType" ItemsSource="{Binding Item.PriceData.Pricetype}" Width="120" SelectionChanged="comboBoxPriceType_SelectionChanged">
+                                    <!--<ComboBoxItem Content="Unit" HorizontalAlignment="Left" Width="118"/>
                                     <ComboBoxItem Content="Meter" HorizontalAlignment="Left" Width="118"/>
-                                    <ComboBoxItem Content="Square Meter" HorizontalAlignment="Left" Width="118"/>
+                                    <ComboBoxItem Content="Square Meter" HorizontalAlignment="Left" Width="118"/>-->
                                 </ComboBox>
                             </WrapPanel>
                             <WrapPanel Height="29">
                                 <TextBlock x:Name="textBlock7" TextWrapping="Wrap" Text="Price:" Height="20" Width="80"/>
-                                <TextBox x:Name="textBox_price_Price" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..." TextChanged="controlTextChange"/>
+                                <TextBox x:Name="textBox_price_Price" Text="{Binding Item.PriceData.Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..." TextChanged="controlTextChange"/>
                             </WrapPanel>
                             <WrapPanel Height="29">
                                 <TextBlock x:Name="textBlock8" TextWrapping="Wrap" Text="Discount:" Height="20" Width="80"/>
-                                <TextBox x:Name="textBox_price_Discount" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..." TextChanged="controlTextChange"/>
+                                <TextBox x:Name="textBox_price_Discount" Text="{Binding Item.PriceData.Discount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..." TextChanged="controlTextChange"/>
                             </WrapPanel>
                         </ListBox>
                     </Grid>

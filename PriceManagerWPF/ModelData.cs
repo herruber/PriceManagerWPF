@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -85,17 +86,30 @@ namespace PriceManagerWPF
 
     public class PriceData
     {
-        public enum PriceType
-        {
-            Sqm,
-            M,
-            Unit
-        }
+
+
+        
+
+        //public PriceType Pricetype { get; set; }
+
+        //public PriceData()
+        //{
+        //    Pricetype = PriceType.M;
+        //}
 
         public double Price { get; set; }
         public double Discount { get; set; }
-        public string Currency = "kr";
-        public PriceType Pricetype = PriceType.Unit;
+        public string[] Pricetype { get; set; }
+
+        public PriceData()
+        {
+            Pricetype = new string[] {
+                "Sqm",
+                "M",
+                "Unit"
+            };
+        }
+
 
     }
 
@@ -117,8 +131,8 @@ namespace PriceManagerWPF
         public string Name { get; set; }
         public List<string> OldNames { get; set; }
         public string Type { get; set; }
-        public SizeData SizeData = new SizeData();
-        public PriceData PriceData = new PriceData();
+        public SizeData SizeData { get; set; }
+        public PriceData PriceData { get; set; }
 
         public int MaterialSlots { get; set; }
         public Material[] Materials { get; set; }
