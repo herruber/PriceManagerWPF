@@ -54,7 +54,6 @@ function setFloat(float, type) {
 
 }
 
-
 function setMaterial(cmaterial) {
     debugger;
     cmaterial = JSON.parse(cmaterial);
@@ -75,14 +74,19 @@ function setMaterial(cmaterial) {
 
         }
         else {
-
+            debugger;
             if (propertyName == "normalScale") {
+                debugger;
                 var val = cmaterial[propertyName];
                 material[propertyName] = new THREE.Vector2(val, val);
             }
             else if (propertyName == "tiling") {
+                debugger;
                 var val = cmaterial[propertyName];
                 setTiling(val[0], val[1]);
+            }
+            else if (propertyName == "color") {
+                material.color = new THREE.Vector3(cmaterial.color[0], cmaterial.color[1], cmaterial.color[2]);
             }
             else {
                 material[propertyName] = cmaterial[propertyName];
@@ -92,6 +96,25 @@ function setMaterial(cmaterial) {
 
     }
 
+}
+
+function updateMaterial(names) {
+       
+    var obj = JSON.parse(names);
+    debugger;
+    for (var i = 0; i < obj.length; i++) {
+
+        if (obj[i].name == "tiling") {
+            setTiling(obj[i].value[0], obj[i].value[1]);
+        }
+        else if (obj[i].name == "normalScale") {
+            var v = obj[i].value;
+            material.normalScale = new THREE.Vector2(v, v);
+        }
+        else {
+            material[obj[i].name] = obj[i].value;
+        }
+    }
 }
 
 function setTiling(x, y) {
@@ -109,20 +132,23 @@ function setTiling(x, y) {
 
 }
 
-function setTexture(base64, type) {
+function setColor4(c, type) {
+    c = JSON.parse(c);
+    console.log(c);
+    material[type] = new THREE.Vector3(c[0], c[1], c[2]);
 
-    var old = (material[type]) ? material[type].repeat.clone() : new THREE.Vector2(1, 1);
+}
 
+function setTexture(base64, type, x, y) {
+
+    
     var img = 'data:image/png;base64,' + base64;
     material[type] = new THREE.TextureLoader().load(img);
-    material[type].repeat.set(old.x, old.y);
+    material[type].repeat.set(x, y);
     material[type].wrapS = material[type].wrapT = THREE.RepeatWrapping;
     material.needsUpdate = true;
 
 }
-
-
-
 
 var sunSpeed = -1;
 
@@ -133,7 +159,6 @@ function render() {
         light.position.set(Math.cos(p), 0, Math.sin(p));
     }
 
-    console.log(light.intensity)
     renderer.render(scene, camera);
     requestAnimationFrame(render);
 }

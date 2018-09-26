@@ -475,52 +475,7 @@ namespace PriceManagerWPF
         private void imageButton_Click(object sender, RoutedEventArgs e)
         {
 
-            Button btn = (sender as Button);
-            Canvas canvas = (Canvas)btn.Parent;
-            string mapType = "";
-
-            switch (canvas.Name)
-            {
-                case "groupMap":
-                    mapType = "map";
-                    break;
-                case "groupDisplacement":
-                    mapType = "displacementMap";
-                    break;
-                case "groupRoughness":
-                    mapType = "roughnessMap";
-                    break;
-                case "groupNormal":
-                    mapType = "normalMap";
-                    break;
-                default:
-                    break;
-            }
-
-            OpenFileDialog dlg = new OpenFileDialog();
-
-            if (dlg.ShowDialog() == true)
-            {
-
-
-                PropertyInfo property = typeof(Material).GetProperty(mapType);
-
-                ImageSource imageSource = new BitmapImage(new Uri(dlg.FileName));
-
-                ImageBrush b = new ImageBrush();
-                b.ImageSource = imageSource;
-
-                btn.Background = b;
-
-                var path = dlg.FileName;
-
-                var base64 = Convert.ToBase64String(File.ReadAllBytes(dlg.FileName));
-
-                property.SetValue(viewModel.material, base64);
-
-                chromeBrowser.ExecuteScriptAsync("setTexture", base64, mapType);
-            }
-
+           
         }
 
         private void floatProperty_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -558,6 +513,16 @@ namespace PriceManagerWPF
             {
                 viewModel.material = viewModel.Item.Materials[viewModel.materialId];
                 UpdateBindings();
+
+                SolidColorBrush b = new SolidColorBrush();
+                b.Color = Colors.OrangeRed;
+
+                map.Background = b;
+                normalMap.Background = b;
+                roughnessMap.Background = b;
+                displacementMap.Background = b;
+                metalnessMap.Background = b;
+
                 chromeBrowser.ExecuteScriptAsync("setMaterial", JsonConvert.SerializeObject(viewModel.material));
                 materialDisplay.Visibility = Visibility.Visible;
             }
@@ -585,20 +550,52 @@ namespace PriceManagerWPF
             selectedColor.Background = brush;
         }
 
-        private void SampleXY(Point p, Image img)
+        private void SampleXY(Point p, Image image)
         {
 
             ColorWpf col = GetPixelColor(p);
+            Debug.WriteLine("x: " +p.X + " y:" + p.Y);
+            BitmapSource img = (BitmapSource)image.Source;
 
-            double wx = p.X - 129;
-            double wy = -(p.Y - 129);
+            int stride = ((img.PixelWidth * 24 + 23) & ~23) / 8;
+
+            float max = 128;
+
+            int x = (int)p.X;
+            int y = (int)p.Y;
+
+            double wx = x - 129;
+            double wy = -(y - 129);
+
+            var id = x + y * img.PixelWidth;
+            id *= 4;
 
             var dist = (float)Math.Sqrt(Math.Pow(wx, 2) + Math.Pow(wy, 2));
 
+            double angle = Math.Atan2(wy, wx);
+
+            float deg = (float)(angle / Math.PI) * 180;
+
+            if (deg < 0)
+            {
+                deg = 360 + deg;
+            }
+
             if (dist <= 128)
             {
+                ColorWpf color = new ColorWpf().FromHsv(deg, dist / max, 1.0);
+                SetSelectedColor(color);
 
-                SetSelectedColor(col);
+                Color c = ((SolidColorBrush)selectedColor.Background).Color;
+                float[] colf = new float[] { c.R / 255f, c.G / 255f, c.B / 255f, c.A / 255f };
+                typeof(Material).GetProperty(colorType).SetValue(viewModel.material, colf);
+
+                chromeBrowser.ExecuteScriptAsync("setColor4", JsonConvert.SerializeObject(colf), colorType);
+
+                SolidColorBrush b = new SolidColorBrush();
+                b.Color = c;
+
+                color_button.Background = b;
             }
 
 
@@ -719,6 +716,140 @@ namespace PriceManagerWPF
         private void window_Unloaded(object sender, RoutedEventArgs e)
         {
             Cef.Shutdown();
+        }
+
+        private string OpenFile(string type = null)
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+
+            if (dlg.ShowDialog() == true)
+            {
+
+
+                return dlg.FileName;
+            }
+
+            return null;
+        }
+
+        private ImageBrush LoadImage(string file)
+        {
+            ImageSource imageSource = new BitmapImage(new Uri(file));
+
+            ImageBrush b = new ImageBrush();
+            b.ImageSource = imageSource;
+            return b;
+        }
+
+        private void SetTexture(PropertyInfo property, Button btn)
+        {
+
+            string file = OpenFile();
+
+            btn.Background = LoadImage(file);
+
+            var base64 = Convert.ToBase64String(File.ReadAllBytes(file));
+            chromeBrowser.ExecuteScriptAsync("setTexture", base64, property.Name, viewModel.material.tiling[0], viewModel.material.tiling[1]);
+        }
+
+        private void mapClick(object sender, RoutedEventArgs e)
+        {
+            Button btn = (sender as Button);
+
+            SetTexture(typeof(Material).GetProperty("map"), btn);
+
+        }
+
+        private void normalMapClick(object sender, RoutedEventArgs e)
+        {
+            Button btn = (sender as Button);
+
+            SetTexture(typeof(Material).GetProperty("normalMap"), btn);
+        }
+
+        private void roughnessMapClick(object sender, RoutedEventArgs e)
+        {
+            Button btn = (sender as Button);
+
+            SetTexture(typeof(Material).GetProperty("roughnessMap"), btn);
+        }
+
+        private void displacementMapClick(object sender, RoutedEventArgs e)
+        {
+            Button btn = (sender as Button);
+
+            SetTexture(typeof(Material).GetProperty("displacementMap"), btn);
+        }
+
+        private void metalnessMapClick(object sender, RoutedEventArgs e)
+        {
+            Button btn = (sender as Button);
+
+            SetTexture(typeof(Material).GetProperty("metalnessMap"), btn);
+        }
+
+        public class NameValuePair
+        {
+            public string name { get; set; }
+            public object value { get; set; }
+
+            public NameValuePair(string _name, object _value)
+            {
+                name = _name;
+                value = _value;
+            }
+        }
+
+        NameValuePair[] pairs = new NameValuePair[] {
+                new NameValuePair("roughness", null),
+                new NameValuePair("tiling", null),
+                new NameValuePair("metalness", null),
+                new NameValuePair("normalScale", null)
+            };
+
+        private void materialTextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (viewModel != null)
+            {
+                pairs[0].value = viewModel.material.roughness;
+                pairs[1].value = viewModel.material.tiling;
+                pairs[2].value = viewModel.material.metalness;
+                pairs[3].value = viewModel.material.normalScale;
+
+
+                chromeBrowser.ExecuteScriptAsync("updateMaterial", JsonConvert.SerializeObject(pairs));
+            }
+
+        }
+
+        private void materialDoubleChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (viewModel != null)
+            {
+                pairs[0].value = viewModel.material.roughness;
+                pairs[1].value = viewModel.material.tiling;
+                pairs[2].value = viewModel.material.metalness;
+                pairs[3].value = viewModel.material.normalScale;
+
+
+                chromeBrowser.ExecuteScriptAsync("updateMaterial", JsonConvert.SerializeObject(pairs));
+            }
+        }
+
+        private static string colorType = "";
+
+        private void diffuseColor(object sender, RoutedEventArgs e)
+        {
+            palette.Visibility = Visibility.Visible;
+
+            Button btn = (sender as Button);
+            colorType = "color";
+        }
+
+        private void pickColor(object sender, RoutedEventArgs e)
+        {
+            palette.Visibility = Visibility.Hidden;
+
         }
     }
 }

@@ -48,7 +48,13 @@ namespace PriceManagerWPF
 
         public ColorWpf FromRgb(byte r, byte g, byte b)
         {
-            return null;
+            R = r;
+            G = g;
+            B = b;
+
+            RgbToHsv(r, g, b);
+
+            return this;
         }
 
         public ColorWpf FromHsv(double h, double s, double v)
@@ -63,6 +69,55 @@ namespace PriceManagerWPF
             B = result.B;
 
             return this;
+        }
+
+        public void RgbToHsv(byte r, byte g, byte b)
+        {
+            double min, max, delta;
+
+            min = r < g ? r : g;
+            min = min < b ? min : b;
+
+            max = r > g ? r : g;
+            max = max > b ? max : b;
+
+            Brightness = max;                                // v
+            delta = max - min;
+            if (delta < 0.00001)
+            {
+                Saturation = 0;
+                Hue = 0; // undefined, maybe nan?
+                return;
+            }
+            if (max > 0.0)
+            { // NOTE: if Max is == 0, this divide would cause a crash
+                Saturation = (delta / max);                  // s
+            }
+            else
+            {
+                // if max is 0, then r = g = b = 0              
+                // s = 0, h is undefined
+                Saturation = 0.0;
+                Hue = 0;                            // its now undefined
+                return;
+            }
+            if (r >= max)                           // > is bogus, just keeps compilor happy
+                Hue = (g - b) / delta;        // between yellow & magenta
+            else
+            if (g >= max)
+                Hue = 2.0 + (b - r) / delta;  // between cyan & yellow
+            else
+            {
+                Hue = 4.0 + (r - g) / delta;  // between magenta & cyan
+
+                Hue *= 60.0;                              // degrees
+
+                if (Hue < 0.0)
+                    Hue += 360.0;
+
+                return;
+            }
+
         }
 
         RGB HsvToRgb(double h, double S, double V)

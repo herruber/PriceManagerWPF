@@ -63,6 +63,9 @@ namespace PriceManagerWPF
         public string roughnessMap { get; set; }
         public string displacementMap { get; set; }
 
+        //Colors
+        public float[] color { get; set; }
+
         public float[] tiling { get; set; }
         public float roughness { get; set; }
         public float metalness { get; set; }
@@ -80,6 +83,7 @@ namespace PriceManagerWPF
             roughness = 1;
             metalness = 0;
             normalScale = 1;
+            color = new float[4] {1, 1, 1, 1};
             
         }
     }
