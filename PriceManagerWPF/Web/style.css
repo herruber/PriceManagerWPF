@@ -3,6 +3,10 @@
     text-align:center;
     color:rgb(56, 56, 56);
     overflow:hidden;
+    padding:0;
+    margin:0;
+    left:0;
+    top:0;
 }
 
 div{
@@ -23,16 +27,21 @@ input[type="number"]{
 label{
     margin-left:10px;
     margin-right:2px;
-    
+
 }
 
 .wrapper{
+
     box-sizing:border-box;
     background-color:white;
     display:inline-block;
     border:1px solid gray;
     border-radius:12px;
     padding:4px;
+}
+
+.wrapper-top{
+    position:absolute;
 }
 
 .noselect {

@@ -19,14 +19,14 @@
         </GroupBox>
 
         <ContentControl x:Name="browserContent" Panel.ZIndex="99" Canvas.Left="10" Canvas.Top="65" Height="515" Width="515" ScrollViewer.VerticalScrollBarVisibility="Disabled" BorderThickness="2"/>
-        <Border BorderBrush="Black" BorderThickness="1" Height="515" Canvas.Left="10" Canvas.Top="65" Width="515"/>
-        <Grid Height="512" Canvas.Left="554" Canvas.Top="68" Width="514">
+        <Border BorderBrush="Black" BorderThickness="2" Height="515" Canvas.Left="10" Canvas.Top="65" Width="515"/>
+        <Grid x:Name="truss_Container" Visibility="Hidden" Height="512" Canvas.Left="554" Canvas.Top="68" Width="514">
             <Image x:Name="truss" Source="trusses_measurements.png" Margin="0"/>
             <TextBox HorizontalAlignment="Left" Height="22" Margin="201,399,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="60"/>
             <TextBox HorizontalAlignment="Left" Height="22" Margin="472,233,-18,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="60"/>
             <TextBox HorizontalAlignment="Left" Height="22" Margin="174,171,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="60"/>
         </Grid>
-        <Grid Height="512" Canvas.Left="554" Canvas.Top="68" Width="512">
+        <Grid x:Name="items_Container" Visibility="Hidden" Height="512" Canvas.Left="554" Canvas.Top="68" Width="512">
             <Image x:Name="items" Source="items_measurements.png" Margin="0"/>
             <TextBox HorizontalAlignment="Left" Height="22" Margin="104,301,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="60"/>
             <TextBox HorizontalAlignment="Left" Height="22" Margin="332,301,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="60"/>

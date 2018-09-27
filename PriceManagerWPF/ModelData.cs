@@ -84,7 +84,7 @@ namespace PriceManagerWPF
             metalness = 0;
             normalScale = 1;
             color = new float[4] {1, 1, 1, 1};
-            
+
         }
     }
 
@@ -112,10 +112,11 @@ namespace PriceManagerWPF
         public int Width { get; set; }
         public int Height { get; set; }
         public int Depth { get; set; }
-        public float AngleDeg { get; set; }
+        public float[] Angles { get; set; }
+        public int HeightOffset { get; set; }
+        public int RoofLength { get; set; }
 
         public Dictionary<string, float[]> SnapPoints = new Dictionary<string, float[]>();
-
 
     }
 
