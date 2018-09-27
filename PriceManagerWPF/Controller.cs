@@ -71,11 +71,6 @@ namespace PriceManagerWPF
                 throw;
             }
 
-
-
-
         }
-
-
     }
 }

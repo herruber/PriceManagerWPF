@@ -91,16 +91,6 @@ namespace PriceManagerWPF
     public class PriceData
     {
 
-
-        
-
-        //public PriceType Pricetype { get; set; }
-
-        //public PriceData()
-        //{
-        //    Pricetype = PriceType.M;
-        //}
-
         public double Price { get; set; }
         public double Discount { get; set; }
         public string[] Pricetype { get; set; }

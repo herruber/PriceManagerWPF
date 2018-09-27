@@ -103,8 +103,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Hub.cs" />
     <Compile Include="MainViewModel.cs" />
     <Compile Include="WindowViewModel.cs" />
+    <Compile Include="Window_colorpicker.xaml.cs">
+      <DependentUpon>Window_colorpicker.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Window_material.xaml.cs">
+      <DependentUpon>Window_material.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Window_model.xaml.cs">
+      <DependentUpon>Window_model.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -120,6 +130,18 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Window_colorpicker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Window_material.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Window_model.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ModelData.cs" />
@@ -158,6 +180,7 @@
   <ItemGroup>
     <Resource Include="Icons\baseline_rotate_right_black_18dp.png" />
     <Resource Include="Icons\outline_highlight_black_18dp.png" />
+    <Resource Include="items_measurements.png" />
     <Content Include="Scripts\app.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -168,9 +191,13 @@
     <Content Include="Scripts\jquery-3.3.1.min.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.js" />
+    <Content Include="Scripts\OrbitControls.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Scripts\three.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="trusses_measurements.png" />
     <Content Include="Web\scene.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

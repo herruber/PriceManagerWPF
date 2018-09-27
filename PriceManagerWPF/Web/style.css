@@ -19,3 +19,33 @@ input[type="number"]{
     display:inline-block;
     width:2em;
 }
+
+label{
+    margin-left:10px;
+    margin-right:2px;
+    
+}
+
+.wrapper{
+    box-sizing:border-box;
+    background-color:white;
+    display:inline-block;
+    border:1px solid gray;
+    border-radius:12px;
+    padding:4px;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+.selected{
+    box-sizing:border-box;
+    background-color:rgb(111, 165, 111);
+    border:2px solid rgb(34, 34, 34);
+}
