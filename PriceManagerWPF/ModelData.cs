@@ -113,7 +113,8 @@ namespace PriceManagerWPF
         public int Height { get; set; }
         public int Depth { get; set; }
         public float[] Angles { get; set; }
-        public int HeightOffset { get; set; }
+        public int OffsetBottom { get; set; }
+        public int OffsetTop { get; set; }
         public int RoofLength { get; set; }
 
         public Dictionary<string, float[]> SnapPoints = new Dictionary<string, float[]>();

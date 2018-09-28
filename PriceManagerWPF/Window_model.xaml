@@ -22,16 +22,15 @@
         <Border BorderBrush="Black" BorderThickness="2" Height="515" Canvas.Left="10" Canvas.Top="65" Width="515"/>
         <Grid x:Name="truss_Container" Visibility="Hidden" Height="512" Canvas.Left="554" Canvas.Top="68" Width="514">
             <Image x:Name="truss" Source="trusses_measurements.png" Margin="0"/>
-            <TextBox HorizontalAlignment="Left" Height="22" Margin="201,399,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="60"/>
-            <TextBox HorizontalAlignment="Left" Height="22" Margin="472,233,-18,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="60"/>
-            <TextBox HorizontalAlignment="Left" Height="22" Margin="174,171,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="60"/>
+            <TextBox HorizontalAlignment="Left" Height="22" Margin="201,399,0,0" TextWrapping="Wrap" Text="{Binding Item.SizeData.Width, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="60"/>
+            <TextBox HorizontalAlignment="Left" Height="22" Margin="472,233,-18,0" TextWrapping="Wrap" Text="{Binding Item.SizeData.Height, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="60"/>
+            <TextBox HorizontalAlignment="Left" Height="22" Margin="174,171,0,0" TextWrapping="Wrap" Text="{Binding Item.SizeData.RoofLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="60"/>
         </Grid>
         <Grid x:Name="items_Container" Visibility="Hidden" Height="512" Canvas.Left="554" Canvas.Top="68" Width="512">
-            <Image x:Name="items" Source="items_measurements.png" Margin="0"/>
-            <TextBox HorizontalAlignment="Left" Height="22" Margin="104,301,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="60"/>
-            <TextBox HorizontalAlignment="Left" Height="22" Margin="332,301,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="60"/>
-            <TextBox HorizontalAlignment="Left" Height="22" Margin="280,389,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="60"/>
-            <TextBox HorizontalAlignment="Left" Height="22" Margin="280,101,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="60"/>
+            <Image Source="items_measurements.png"></Image>
+            <TextBox HorizontalAlignment="Left" Height="22" Margin="154,394,0,0" TextWrapping="Wrap" Text="{Binding Item.SizeData.OffsetBottom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="60"/>
+            <TextBox HorizontalAlignment="Left" Height="22" Margin="277,382,0,0" TextWrapping="Wrap" Text="{Binding Item.SizeData.Width, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="60"/>
+            <TextBox HorizontalAlignment="Left" Height="22" Margin="280,101,0,0" TextWrapping="Wrap" Text="{Binding Item.SizeData.OffsetTop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="60"/>
         </Grid>
     </Canvas>
 

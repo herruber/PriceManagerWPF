@@ -37,6 +37,69 @@ var material = sphere.material;
 var models = [];
 var currentModel = sphere;
 
+var currentVertexGroup = {
+    vertexObject: undefined,
+    selectedVertexObjects: [],
+    colorDefault: new THREE.Color(0.5, 0.5, 0.55),
+    colorSelected: new THREE.Color(0, 1, 0),
+
+    deselect: function(object){
+
+        var g = object.geometry;
+
+        for (var f = 0; f < g.faces.length; f++) {
+
+            var a = this.colorDefault;
+            g.faces[f].color.setRGB(a.r, a.g, a.b);
+        }
+
+        g.colorsNeedUpdate = true;
+        this.selectedVertexObjects.splice(this.selectedVertexObjects.indexOf(object));
+
+    },
+
+    deselectAll: function () {
+
+        var objs = currentVertexGroup.selectedVertexObjects;
+
+
+        for (var i = 0; i < objs.length; i++) {
+
+
+
+            var faces = objs[i].geometry.faces;
+            objs[i].geometry.colorsNeedUpdate = true;
+
+            for (var f = 0; f < faces.length; f++) {
+
+                var a = this.colorDefault;
+                faces[f].color.setRGB(a.r, a.g, a.b);
+
+            }
+
+
+        }
+
+        this.selectedVertexObjects = [];
+
+    },
+
+    select: function (object) {
+
+        var g = object.geometry;
+
+        for (var f = 0; f < g.faces.length; f++) {
+
+            var a = this.colorSelected;
+            g.faces[f].color.setRGB(a.r, a.g, a.b);
+        }
+
+        g.colorsNeedUpdate = true;
+        this.selectedVertexObjects.push(object);
+    }
+
+};
+
 scene.add(sphere, light, ambient, camera);
 var renderview;
 
@@ -52,6 +115,40 @@ function pointUnderMouse(event) {
     return vec;
 }
 
+function displayVertices() {
+
+    var geo = currentModel.geometry;
+    var verts = geo.vertices;
+    var mat = new THREE.MeshBasicMaterial();
+    mat.vertexColors = THREE.FaceColors;
+
+    var group = new THREE.Object3D();
+    scene.add(group);
+    currentVertexGroup.vertexObject = group;
+
+
+
+    for (var v = 0; v < verts.length; v++) {
+        var vert = verts[v];
+        var p = vert.clone();
+        var g = new THREE.BoxGeometry(0.05, 0.05, 0.05);
+        var m = new THREE.Mesh(g, mat);
+
+        m.position.set(p.x, p.y, p.z);
+        debugger;
+        currentVertexGroup.vertexObject.add(m);
+
+        for (var f = 0; f < g.faces.length; f++) {
+
+            var a = currentVertexGroup.colorDefault;
+            g.faces[f].color.setRGB(a.r, a.g, a.b);
+        }
+
+
+    }
+
+}
+
 function loadModel(json, materials) {
 
     var obj = JSON.parse(json);
@@ -63,6 +160,7 @@ function loadModel(json, materials) {
     switchModel(models.length - 1);
 
     setMaterial(materials);
+    displayVertices();
 }
 
 function setLightRotation(float) {
@@ -247,6 +345,75 @@ function run(elem) {
     render();
 }
 
+function setObjectColor(color, geometry) {
+
+    geometry.colorsNeedUpdate = true;
+
+    for (var f = 0; f < geometry.faces.length; f++) {
+        var face = geometry.faces[f];
+
+        face.color.setRGB(color.r, color.g, color.b);
+    }
+
+}
+
+var lines = null;
+var lineStats = [];
+
+function getLineStats() {
+
+    lineStats = [];
+
+    var verts = lines.geometry.vertices;
+
+    for (var l = 0; l < verts.length - 1; l++) {
+
+
+        var length = verts[l].clone().distanceTo(verts[l + 1])
+        length = Math.round(length * 1000);
+
+        var dx = verts[l + 1].x - verts[l].x;
+        var dy = verts[l + 1].y - verts[l].y;
+
+        var rad = Math.atan(dy / dx);
+        var deg = (rad / Math.PI) * 180;
+
+        lineStats.push({
+            length: length,
+            angle: deg
+        })
+
+    }
+
+
+    console.log(lineStats)
+}
+
+function updateLines() {
+
+    if (currentVertexGroup.selectedVertexObjects.length < 2) return;
+
+    var mat = new THREE.LineBasicMaterial();
+    mat.color = new THREE.Color(0.2, 0.7, 0.2);
+
+    var g = new THREE.Geometry();
+
+    if (lines) {
+        scene.remove(lines);
+        lines = null;
+    }
+    debugger;
+    for (var v = 0; v < currentVertexGroup.selectedVertexObjects.length - 1; v++) {
+
+        g.vertices.push(currentVertexGroup.selectedVertexObjects[v].position.clone());
+        g.vertices.push(currentVertexGroup.selectedVertexObjects[v + 1].position.clone());
+    }
+
+    lines = new THREE.LineSegments(g, mat);
+    scene.add(lines);
+    getLineStats();
+}
+
 window.onload = function () {
 
     var divs = $(".wrapper");
@@ -283,26 +450,27 @@ window.onload = function () {
     raycaster.far = 20;
 
     var div = document.createElement("div");
-    $(".render-view")[0].addEventListener("mousemove", function (event) {
+
+    $(".render-view")[0].addEventListener("click", function (event) {
         event.preventDefault();
+        debugger;
+        if (currentVertexGroup) {
 
-        var point = pointUnderMouse(event);
-        console.log(point)
+            var point = pointUnderMouse(event);
 
-        raycaster.setFromCamera(point, camera);
+            raycaster.setFromCamera(point, camera);
 
-        var intersects = raycaster.intersectObjects([currentModel], true);
+            var intersects = raycaster.intersectObjects([currentVertexGroup.vertexObject], true);
+            console.log(currentVertexGroup.vertexObject)
+            if (intersects.length > 0) {
 
-        console.log(intersects)
+                var object = intersects[0].object;
 
-        if (intersects.length > 0) {
-            var p = intersects[0].point;
-            var m = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.1), new THREE.MeshBasicMaterial());
-            m.position.set(p.x, p.y, p.z);
-            scene.add(m);
+                currentVertexGroup.select(object);
+
+                updateLines();
+            }
         }
-
-
 
     }, { capture: true })
 

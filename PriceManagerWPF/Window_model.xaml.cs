@@ -40,7 +40,8 @@ namespace PriceManagerWPF
             settings.RemoteDebuggingPort = 8088;
             BrowserSettings sett = new BrowserSettings();
             sett.Javascript = CefState.Enabled;
-
+            sett.FileAccessFromFileUrls = CefState.Enabled;
+            sett.UniversalAccessFromFileUrls = CefState.Enabled;
             sett.WebSecurity = CefState.Disabled;
             // Initialize cef with the provided settings
             Cef.Initialize(settings);

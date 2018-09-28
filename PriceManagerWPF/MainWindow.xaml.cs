@@ -90,12 +90,10 @@ namespace PriceManagerWPF
 
             manager = new ScriptManager(new Window[] {Hub.mainWindow, Hub.window_colorpicker, Hub.window_material, Hub.window_model });
 
-            groupBox.Visibility = Visibility.Hidden;
+            modelDataView.Visibility = Visibility.Hidden;
             SetBindings();
 
             var col = new ColorWpf().FromHsv(0, 1, 1);
-            
-
         }
 
         public static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
@@ -286,6 +284,15 @@ namespace PriceManagerWPF
             Hub.window_material.list_Materials.Items.Clear();
             DataContext = viewModel;
 
+            Hub.window_model.DataContext = null;
+            Hub.window_model.DataContext = viewModel;
+
+            Hub.window_material.DataContext = null;
+            Hub.window_material.DataContext = DataContext;
+
+            Hub.window_colorpicker.DataContext = null;
+            Hub.window_colorpicker.DataContext = DataContext;
+
 
             foreach (var mat in viewModel.Item.Materials)
             {
@@ -310,7 +317,7 @@ namespace PriceManagerWPF
                 viewModel.Item = Models[list_Models.SelectedIndex];
 
                 UpdateBindings();
-                groupBox.Visibility = Visibility.Visible;
+                modelDataView.Visibility = Visibility.Visible;
             }
         }
 
@@ -357,6 +364,24 @@ namespace PriceManagerWPF
             }
 
             AddModel(model);
+        }
+
+        private void setType(object sender, TextChangedEventArgs e)
+        {
+            TextBox txt = (sender as TextBox);
+
+            if (txt.Text.ToLower().Contains("truss"))
+            {
+                Hub.window_model.truss_Container.Visibility = Visibility.Visible;
+                Hub.window_model.items_Container.Visibility = Visibility.Hidden;
+
+            }
+            else if (txt.Text.ToLower().Contains("window") || txt.Text.ToLower().Contains("gate") || txt.Text.ToLower().Contains("door"))
+            {
+                Hub.window_model.truss_Container.Visibility = Visibility.Hidden;
+                Hub.window_model.items_Container.Visibility = Visibility.Visible;
+            }
+
         }
     }
 }

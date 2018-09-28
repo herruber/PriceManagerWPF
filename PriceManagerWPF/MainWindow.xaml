@@ -17,7 +17,7 @@
         <Button x:Name="button" HorizontalAlignment="Left" VerticalAlignment="Top" Width="125" Height="30" Click="button_AddModel" BorderThickness="0,1" BorderBrush="#8C000000" Background="#FF9AFFBA" Canvas.Top="5">
             <Label x:Name="label" Content="Add new model" FontWeight="Medium" FontFamily="Arial" FontSize="16" Background="{x:Null}" OpacityMask="#FF323030" Foreground="#FF6C6C6C"/>
         </Button>
-        <GroupBox x:Name="groupBox" Header="Model" Canvas.Left="210" Canvas.Top="40" BorderBrush="#BF5B6E7A" BorderThickness="1" Width="285" Height="576" Background="#FFECECEC">
+        <GroupBox x:Name="modelDataView" Header="Model" Canvas.Left="210" Canvas.Top="40" BorderBrush="#BF5B6E7A" BorderThickness="1" Width="285" Height="576" Background="#FFECECEC">
             <ListBox x:Name="listBox" BorderBrush="{x:Null}" VerticalContentAlignment="Center" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False" Margin="4,10" Background="#FFECECEC">
                 <Expander x:Name="exp_base" Header="Base" BorderBrush="Black" BorderThickness="0,0,0,1" IsExpanded="True" Width="239">
                     <ListBox x:Name="listBox1" Background="#FFECECEC">
@@ -27,7 +27,7 @@
                         </WrapPanel>
                         <WrapPanel Height="29">
                             <TextBlock x:Name="textBlock1" TextWrapping="Wrap" Text="Type:" Height="20" Width="80"/>
-                            <TextBox x:Name="textBox_base_Type" Text="{Binding Item.Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..." Background="#FF9AFFBA"/>
+                            <TextBox x:Name="textBox_base_Type" Text="{Binding Item.Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..." Background="#FF9AFFBA" TextChanged="setType"/>
                         </WrapPanel>
                     </ListBox>
                 </Expander>
@@ -49,6 +49,18 @@
                             <WrapPanel Height="29">
                                 <TextBlock x:Name="textBlock5" TextWrapping="Wrap" Text="Angle:" Height="20" Width="80"/>
                                 <TextBox x:Name="textBox_size_AngleDeg" Text="{Binding Item.SizeData.AngleDeg, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..." TextChanged="controlTextChange"/>
+                            </WrapPanel>
+                            <WrapPanel Height="29">
+                                <TextBlock x:Name="textBlock9" TextWrapping="Wrap" Text="Roof Length" Height="20" Width="80"/>
+                                <TextBox x:Name="textBox_size_AngleDeg1" Text="{Binding Item.SizeData.RoofLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..." TextChanged="controlTextChange"/>
+                            </WrapPanel>
+                            <WrapPanel Height="29">
+                                <TextBlock x:Name="textBlock10" TextWrapping="Wrap" Text="Offset Top" Height="20" Width="80"/>
+                                <TextBox x:Name="textBox_size_AngleDeg2" Text="{Binding Item.SizeData.OffsetTop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..." TextChanged="controlTextChange"/>
+                            </WrapPanel>
+                            <WrapPanel Height="29">
+                                <TextBlock x:Name="textBlock11" TextWrapping="Wrap" Text="Offset Bottom" Height="20" Width="80"/>
+                                <TextBox x:Name="textBox_size_AngleDeg3" Text="{Binding Item.SizeData.OffsetBottom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="20" TextWrapping="Wrap" Width="145" AutomationProperties.HelpText="Enter name..." TextChanged="controlTextChange"/>
                             </WrapPanel>
                         </ListBox>
                     </Grid>
