@@ -37,6 +37,12 @@ var material = sphere.material;
 var models = [];
 var currentModel = sphere;
 
+Array.prototype.last = function () {
+
+    return this[this.length - 1];
+
+}
+
 var currentVertexGroup = {
     vertexObject: undefined,
     selectedVertexObjects: [],
@@ -103,6 +109,20 @@ var currentVertexGroup = {
 scene.add(sphere, light, ambient, camera);
 var renderview;
 
+function worldToScreen(object) {
+    var width = renderer.domElement.width;
+    var height = renderer.domElement.height;
+    var widthHalf = width / 2, heightHalf = height / 2;
+
+    var vector = new THREE.Vector3();
+    vector.setFromMatrixPosition(object.matrixWorld).project(camera);
+
+    vector.x = (vector.x * widthHalf) + widthHalf;
+    vector.y = -(vector.y * heightHalf) + heightHalf;
+
+    return vector;
+}
+
 function pointUnderMouse(event) {
     var vec = new THREE.Vector2(); // create once and reuse
     var pos = new THREE.Vector3(); // create once and reuse
@@ -115,23 +135,43 @@ function pointUnderMouse(event) {
     return vec;
 }
 
-function displayVertices() {
+function updatePivot(bajs) {
+    debugger;
+    var box = new THREE.Box3().setFromObject(currentModel);
+    var size = box.getSize();
+    var center = box.getCenter();
 
-    var geo = currentModel.geometry;
-    var verts = geo.vertices;
-    var mat = new THREE.MeshBasicMaterial();
-    mat.vertexColors = THREE.FaceColors;
+    var pos = new THREE.Vector3();
+    pos.y = box.min.y;
+    pos.z = center.z;
+    pos.x = center.x;
+
+    var offset = new THREE.Vector3().sub(pos);
+
+    var verts = currentModel.geometry.vertices;
+
+    for (var v = 0; v < verts.length; v++) {
+
+        verts[v].add(offset);
+    }
+
+    currentModel.geometry.verticesNeedUpdate = true;
+
+}
+
+function displayVertices() {
 
     var group = new THREE.Object3D();
     scene.add(group);
     currentVertexGroup.vertexObject = group;
 
-
+    var verts = currentModel.geometry.vertices;
+    var mat = new THREE.MeshBasicMaterial({vertexColors: THREE.FaceColors});
 
     for (var v = 0; v < verts.length; v++) {
         var vert = verts[v];
         var p = vert.clone();
-        var g = new THREE.BoxGeometry(0.05, 0.05, 0.05);
+        var g = new THREE.BoxGeometry(0.01, 0.01, 0.01);
         var m = new THREE.Mesh(g, mat);
 
         m.position.set(p.x, p.y, p.z);
@@ -154,6 +194,11 @@ function loadModel(json, materials) {
     var obj = JSON.parse(json);
     var info = new THREE.JSONLoader().parse(obj);
     var mesh = new THREE.Mesh(info.geometry, info.materials);
+    var wire = new THREE.WireframeGeometry(info.geometry);
+    var mat = new THREE.LineBasicMaterial({color: 0x009900, linewidth: 2});
+
+    mesh.add(new THREE.LineSegments(wire, mat));
+
     scene.add(mesh);
     models.push(mesh);
 
@@ -324,6 +369,7 @@ function setTexture(base64, type, x, y, mat) {
 }
 
 var sunSpeed = -1;
+var counter = 0;
 
 function render() {
 
@@ -331,6 +377,12 @@ function render() {
         var p = performance.now() / 2000;
         light.position.set(Math.cos(p), 0, Math.sin(p));
     }
+
+    if (followObject) {
+        updatePointDisplay();
+        updateLineDisplay();
+    }
+
 
     renderer.render(scene, camera);
     requestAnimationFrame(render);
@@ -386,7 +438,69 @@ function getLineStats() {
     }
 
 
+    updateLineDisplay();
+
     console.log(lineStats)
+}
+
+function worldToScreenVec(vec) {
+    var vector = vec.clone();
+    var width = renderer.domElement.width;
+    var height = renderer.domElement.height;
+    var widthHalf = width / 2, heightHalf = height / 2;
+
+    vector.project(camera);
+
+    vector.x = (vector.x * widthHalf) + widthHalf;
+    vector.y = -(vector.y * heightHalf) + heightHalf;
+
+    return vector;
+}
+
+function updateLineDisplay() {
+
+    if (lineStats.length < 1) {
+        return;
+    }
+
+    $(".line.length").text("Length :" + lineStats.last().length);
+    $(".line.angle").text("Angle :" + lineStats.last().angle);
+
+    var wrapper = $(".line-data")[0];
+
+
+    var mid = lines.geometry.vertices.last().clone().add(lines.geometry.vertices[lines.geometry.vertices.length - 2]).divideScalar(2);
+    $(".line.mid").text("( " + mid.x + " , " + mid.y + " , " + mid.z + " )");
+    var sPos = worldToScreenVec(mid);
+
+    wrapper.style.left = Math.floor(sPos.x).toString() + "px";
+    wrapper.style.top = Math.floor(sPos.y).toString() + "px";
+
+}
+
+var pointDisplay = $(".point-data")[0]
+var followObject = null;
+
+
+function updatePointDisplay() {
+    var sPos = worldToScreen(followObject);
+
+    pointDisplay.style.left = Math.floor(sPos.x).toString() + "px";
+    pointDisplay.style.top = Math.floor(sPos.y).toString() + "px";
+}
+
+function createPointDisplay(obj) {
+
+    followObject = obj;
+    var sPos = worldToScreen(obj);
+
+    var h = obj.position.y;
+
+    pointDisplay.value = Math.round(h * 1000);
+    pointDisplay.style.left = Math.floor(sPos.x).toString() + "px";
+    pointDisplay.style.top = Math.floor(sPos.y).toString() + "px";
+    pointDisplay.focus();
+
 }
 
 function updateLines() {
@@ -414,10 +528,27 @@ function updateLines() {
     getLineStats();
 }
 
+function setPivot(offset) {
+
+    var verts = currentModel.geometry.vertices;
+
+    for (var v = 0; v < verts.length; v++) {
+
+        verts[v].y += offset;
+
+        currentVertexGroup.vertexObject.children[v].position.y += offset;
+
+    }
+
+    currentModel.geometry.verticesNeedUpdate = true;
+
+}
+
 window.onload = function () {
 
     var divs = $(".wrapper");
     renderview = $(".render-view")[0];
+
     $(divs).click(function (event) {
 
         if ($(event.target).hasClass("model")) {
@@ -443,6 +574,20 @@ window.onload = function () {
 
     })
 
+    $(".point-data").change(function (event) {
+
+        var val = event.target.value;
+        var obj = currentVertexGroup.selectedVertexObjects.last();
+        var p = obj.position.clone();
+
+        var offset = (parseInt(val) / 1000) - p.y;
+        debugger;
+        setPivot(offset);
+
+
+        debugger;
+    })
+
     controls = new THREE.OrbitControls(camera, $(".render-view")[0]);
 
     var raycaster = new THREE.Raycaster();
@@ -466,9 +611,25 @@ window.onload = function () {
 
                 var object = intersects[0].object;
 
-                currentVertexGroup.select(object);
+                if (event.altKey) {
+
+                    currentVertexGroup.deselect(object);
+                }
+                else {
+
+                    if (!event.shiftKey) {
+                        currentVertexGroup.deselectAll();
+                    }
+
+                    currentVertexGroup.select(object);
+
+                    createPointDisplay(object);
+                }
+
+
 
                 updateLines();
+
             }
         }
 

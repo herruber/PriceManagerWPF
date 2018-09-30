@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 
 namespace PriceManagerWPF
 {
@@ -12,5 +13,6 @@ namespace PriceManagerWPF
         public int materialId { get; set; }
         public Material material { get; set; }
         public ModelData Item { get; set; }
+
     }
 }

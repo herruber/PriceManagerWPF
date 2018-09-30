@@ -70,6 +70,38 @@ namespace PriceManagerWPF
             }
         }
 
-      
+        public float pivotX = 0;
+        public float pivotY = 0;
+        public float pivotZ = 0;
+
+        private void pivotBtn_Click(object sender, RoutedEventArgs e)
+        {
+            chromeBrowser.ExecuteScriptAsync("updatePivot", 0);
+        }
+
+        private void pivot_Changed(object sender, TextChangedEventArgs e)
+        {
+
+            TextBox box = (sender as TextBox);
+
+            string[] info = box.Name.Split('_');
+            float val = float.Parse(box.Text);
+
+            switch (info[1])
+            {
+                case "x":
+                    pivotX = val;
+                    break;
+                case "y":
+                    pivotY = val;
+                    break;
+                case "z":
+                    pivotZ = val;
+                    break;
+                default:
+                    break;
+            }
+
+        }
     }
 }

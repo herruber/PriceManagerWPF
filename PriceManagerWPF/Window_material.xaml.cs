@@ -108,13 +108,6 @@ namespace PriceManagerWPF
 
         private static string colorType = "";
 
-        private void diffuseColor(object sender, RoutedEventArgs e)
-        {
-            Hub.window_colorpicker.Show();
-            Button btn = (sender as Button);
-            colorType = "color";
-        }
-
         private void setNormalScale(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             Slider slider = (sender as Slider);
@@ -189,12 +182,18 @@ namespace PriceManagerWPF
 
             if (Hub.mainWindow.viewModel.materialId > -1)
             {
+
                 Hub.window_model.chromeBrowser.ExecuteScriptAsync("selectMaterial", Hub.mainWindow.viewModel.materialId);
-                Hub.mainWindow.viewModel.material = Hub.mainWindow.viewModel.Item.Materials[Hub.mainWindow.viewModel.materialId];
+
+                var mat = Hub.mainWindow.viewModel.Item.Materials[Hub.mainWindow.viewModel.materialId];
+                Hub.mainWindow.viewModel.material = mat;
                 UpdateBindings();
 
                 SolidColorBrush b = new SolidColorBrush();
                 b.Color = Colors.OrangeRed;
+
+                var diffuseColor = new ColorWpf().FromRgb(Convert.ToByte(mat.color[0] * 255), Convert.ToByte(mat.color[1] * 255), Convert.ToByte(mat.color[2] * 255));
+                var specularColor = new ColorWpf().FromRgb(Convert.ToByte(mat.specularColor[0] * 255), Convert.ToByte(mat.specularColor[1] * 255), Convert.ToByte(mat.specularColor[2] * 255));
 
                 Hub.window_material.map.Background = b;
                 Hub.window_material.normalMap.Background = b;
@@ -202,17 +201,71 @@ namespace PriceManagerWPF
                 Hub.window_material.displacementMap.Background = b;
                 Hub.window_material.metalnessMap.Background = b;
 
+                materialPanel.Visibility = Visibility.Visible;
 
                 Hub.window_material.Show();
             }
             else
             {
-                Hub.window_material.Hide();
-            }
-        
+                materialPanel.Visibility = Visibility.Hidden;
 
+                //Hub.window_material.Hide();
+            }
+
+
+        }
+
+        private void updateColor(object sender, TextChangedEventArgs e)
+        {
+            if (!IsLoaded)
+            {
+                return;
+            }
+
+            TextBox box = (sender as TextBox);
+
+
+            string[] info = box.Name.Split('_');
+            float r = 0;
+            float g = 0;
+            float b = 0;
+
+            if (info[0].ToLower() == "col")
+            {
+
+                float.TryParse(col_red.Text, out r);
+                float.TryParse(col_green.Text, out g);
+                float.TryParse(col_blue.Text, out b);
+
+                Hub.mainWindow.viewModel.material.color[0] = r / 255f;
+                Hub.mainWindow.viewModel.material.color[1] = g / 255f;
+                Hub.mainWindow.viewModel.material.color[2] = b / 255f;
+
+                color_display.Background = new SolidColorBrush(Color.FromRgb(Convert.ToByte(r), Convert.ToByte(g), Convert.ToByte(b)));
+
+                Hub.window_model.chromeBrowser.ExecuteScriptAsync("setColor4", JsonConvert.SerializeObject(Hub.mainWindow.viewModel.material.color), "color");
+            }
+            else
+            {
+                float.TryParse(spec_red.Text, out r);
+                float.TryParse(spec_green.Text, out g);
+                float.TryParse(spec_blue.Text, out b);
+
+                Hub.mainWindow.viewModel.material.specularColor[0] = r / 255f;
+                Hub.mainWindow.viewModel.material.specularColor[1] = g / 255f;
+                Hub.mainWindow.viewModel.material.specularColor[2] = b / 255f;
+
+                specular_display.Background = new SolidColorBrush(Color.FromRgb(Convert.ToByte(r), Convert.ToByte(g), Convert.ToByte(b)));
+
+                Hub.window_model.chromeBrowser.ExecuteScriptAsync("setColor4", JsonConvert.SerializeObject(Hub.mainWindow.viewModel.material.specularColor), "specularColor");
+
+            }
+
+
+
+
+        }
     }
-}
 
     public class NameValuePair
     {

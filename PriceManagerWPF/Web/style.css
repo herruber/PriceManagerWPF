@@ -19,11 +19,6 @@ input{
     margin-right:auto;
 }
 
-input[type="number"]{
-    display:inline-block;
-    width:2em;
-}
-
 label{
     margin-left:10px;
     margin-right:2px;
@@ -57,4 +52,21 @@ label{
     box-sizing:border-box;
     background-color:rgb(111, 165, 111);
     border:2px solid rgb(34, 34, 34);
+}
+
+.point-data{
+    position:absolute;
+    background-color:white;
+    border: 2px solid green;
+    border-radius:8px;
+    padding:4px;
+    width:80px;
+}
+
+.line-data{
+    position:absolute;
+    background-color:white;
+    border: 2px solid green;
+    border-radius:8px;
+    padding:2px;
 }

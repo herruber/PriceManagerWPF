@@ -10,7 +10,6 @@ namespace PriceManagerWPF
     {
 
         public static MainWindow mainWindow;
-        public static Window_colorpicker window_colorpicker;
         public static Window_material window_material;
         public static Window_model window_model;
 

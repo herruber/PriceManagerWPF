@@ -32,6 +32,24 @@
             <TextBox HorizontalAlignment="Left" Height="22" Margin="277,382,0,0" TextWrapping="Wrap" Text="{Binding Item.SizeData.Width, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="60"/>
             <TextBox HorizontalAlignment="Left" Height="22" Margin="280,101,0,0" TextWrapping="Wrap" Text="{Binding Item.SizeData.OffsetTop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="60"/>
         </Grid>
+        <Grid Height="42" Canvas.Left="462" Canvas.Top="601" Width="162">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="33*"/>
+                <ColumnDefinition Width="33*"/>
+                <ColumnDefinition Width="33*"/>
+            </Grid.ColumnDefinitions>
+            <GroupBox Header="X" Margin="0">
+                <TextBox x:Name="pivot_x" TextWrapping="Wrap" Text="0" Margin="0" TextChanged="pivot_Changed"/>
+            </GroupBox>
+            <GroupBox Header="Y" Margin="0" Grid.Column="1">
+                <TextBox x:Name="pivot_y" TextWrapping="Wrap" Text="0" Margin="0"/>
+            </GroupBox>
+            <GroupBox Header="Z" Margin="0" Grid.Column="2">
+                <TextBox x:Name="pivot_z" TextWrapping="Wrap" Text="0" Margin="0"/>
+            </GroupBox>
+        </Grid>
+        <TextBlock Canvas.Left="468" TextWrapping="Wrap" Text="Pivot Point" Canvas.Top="585"/>
+        <Button x:Name="pivotBtn" Content="Update Pivot" Canvas.Left="468" Canvas.Top="648" Width="156" Height="50" Click="pivotBtn_Click"/>
     </Canvas>
 
 </Window>

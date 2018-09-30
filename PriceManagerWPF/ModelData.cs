@@ -65,6 +65,7 @@ namespace PriceManagerWPF
 
         //Colors
         public float[] color { get; set; }
+        public float[] specularColor { get; set; }
 
         public float[] tiling { get; set; }
         public float roughness { get; set; }
@@ -84,7 +85,7 @@ namespace PriceManagerWPF
             metalness = 0;
             normalScale = 1;
             color = new float[4] {1, 1, 1, 1};
-
+            specularColor = new float[4] {1, 1, 1, 1 };
         }
     }
 

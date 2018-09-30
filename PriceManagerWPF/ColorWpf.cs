@@ -33,9 +33,9 @@ namespace PriceManagerWPF
         public byte G { get; set; }
         public byte B { get; set; }
 
-        public double Hue { get; set; }
-        public double Saturation { get; set; }
-        public double Brightness { get; set; }
+        public int Hue { get; set; }
+        public int Saturation { get; set; }
+        public int Brightness { get; set; }
 
         public Color MediaColor { get; set; }
 
@@ -57,7 +57,7 @@ namespace PriceManagerWPF
             return this;
         }
 
-        public ColorWpf FromHsv(double h, double s, double v)
+        public ColorWpf FromHsv(int h, int s, int v)
         {
             RGB result = HsvToRgb(h, s, v);
             Hue = h;
@@ -81,7 +81,7 @@ namespace PriceManagerWPF
             max = r > g ? r : g;
             max = max > b ? max : b;
 
-            Brightness = max;                                // v
+            Brightness = (int)max;                                // v
             delta = max - min;
             if (delta < 0.00001)
             {
@@ -91,29 +91,29 @@ namespace PriceManagerWPF
             }
             if (max > 0.0)
             { // NOTE: if Max is == 0, this divide would cause a crash
-                Saturation = (delta / max);                  // s
+                Saturation = (int)((delta / max) * 100);                  // s
             }
             else
             {
-                // if max is 0, then r = g = b = 0              
+                // if max is 0, then r = g = b = 0
                 // s = 0, h is undefined
-                Saturation = 0.0;
+                Saturation = 0;
                 Hue = 0;                            // its now undefined
                 return;
             }
             if (r >= max)                           // > is bogus, just keeps compilor happy
-                Hue = (g - b) / delta;        // between yellow & magenta
+                Hue = (int)((g - b) / delta);        // between yellow & magenta
             else
             if (g >= max)
-                Hue = 2.0 + (b - r) / delta;  // between cyan & yellow
+                Hue = (int)(2 + (b - r) / delta);  // between cyan & yellow
             else
             {
-                Hue = 4.0 + (r - g) / delta;  // between magenta & cyan
+                Hue = (int)(4 + (r - g) / delta);  // between magenta & cyan
 
-                Hue *= 60.0;                              // degrees
+                Hue *= 60;                              // degrees
 
                 if (Hue < 0.0)
-                    Hue += 360.0;
+                    Hue += 360;
 
                 return;
             }

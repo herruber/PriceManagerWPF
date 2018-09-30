@@ -31,7 +31,7 @@ namespace PriceManagerWPF
 
         public static SolidColorBrush empty = new SolidColorBrush(Colors.MediumVioletRed);
 
-        public static ScriptManager manager;
+        public ScriptManager manager;
         [ComVisible(true)] //Visible to the js
         public class ScriptManager
         {
@@ -81,14 +81,13 @@ namespace PriceManagerWPF
         {
             Hub.mainWindow = this;
             InitializeComponent();
-            Hub.window_colorpicker = new Window_colorpicker();
             Hub.window_material = new Window_material();
             Hub.window_model = new Window_model();
 
             Hub.window_model.Show();
             Hub.window_material.Show();
 
-            manager = new ScriptManager(new Window[] {Hub.mainWindow, Hub.window_colorpicker, Hub.window_material, Hub.window_model });
+            manager = new ScriptManager(new Window[] {Hub.mainWindow, Hub.window_material, Hub.window_model });
 
             modelDataView.Visibility = Visibility.Hidden;
             SetBindings();
@@ -246,7 +245,7 @@ namespace PriceManagerWPF
 
         }
 
-    
+
         private void comboBoxPriceType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
@@ -256,9 +255,9 @@ namespace PriceManagerWPF
         private void imageButton_Click(object sender, RoutedEventArgs e)
         {
 
-           
+
         }
-        
+
         private void textBox_TextChanged(object sender, TextChangedEventArgs e)
         {
 
@@ -289,10 +288,6 @@ namespace PriceManagerWPF
 
             Hub.window_material.DataContext = null;
             Hub.window_material.DataContext = DataContext;
-
-            Hub.window_colorpicker.DataContext = null;
-            Hub.window_colorpicker.DataContext = DataContext;
-
 
             foreach (var mat in viewModel.Item.Materials)
             {
