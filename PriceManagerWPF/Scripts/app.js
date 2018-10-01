@@ -1,6 +1,4 @@
-﻿//Save material as json from js to program and send with modeldata
-
-
+﻿
 var scene = new THREE.Scene();
 
 var renderer = new THREE.WebGLRenderer({ alpha: true });
@@ -108,6 +106,15 @@ var currentVertexGroup = {
 
 scene.add(sphere, light, ambient, camera);
 var renderview;
+
+function save(bajs) {
+    debugger;
+    var bajs = window.external;
+
+    bajs.proxy.Save("hejsan");
+
+
+}
 
 function worldToScreen(object) {
     var width = renderer.domElement.width;

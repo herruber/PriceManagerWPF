@@ -24,6 +24,7 @@ namespace PriceManagerWPF
     {
 
         public ChromiumWebBrowser chromeBrowser;
+        public Proxy proxy;
 
         public Window_model()
         {
@@ -39,6 +40,7 @@ namespace PriceManagerWPF
 
             settings.RemoteDebuggingPort = 8088;
             BrowserSettings sett = new BrowserSettings();
+          
             sett.Javascript = CefState.Enabled;
             sett.FileAccessFromFileUrls = CefState.Enabled;
             sett.UniversalAccessFromFileUrls = CefState.Enabled;
@@ -55,9 +57,11 @@ namespace PriceManagerWPF
             string curDir = AppDomain.CurrentDomain.BaseDirectory;
 
             chromeBrowser.Address = string.Format("file:///{0}/Web/scene.html", curDir);
-
+            proxy = new Proxy();
+            CefSharpSettings.LegacyJavascriptBindingEnabled = true;
             browserContent.Content = chromeBrowser;
-
+            chromeBrowser.RegisterJsObject("proxy", new Proxy(), options: BindingOptions.DefaultBinder);
+            //chromeBrowser.JavascriptObjectRepository.Register("proxy", proxy);
         }
 
         private void setLightRotation(object sender, RoutedPropertyChangedEventArgs<double> e)

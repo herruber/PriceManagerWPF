@@ -265,8 +265,14 @@ namespace PriceManagerWPF
 
         private void saveItems(object sender, RoutedEventArgs e)
         {
+            Hub.window_model.chromeBrowser.ExecuteScriptAsync("save", 0);
 
-            Controller.GenerateRequest("Home", "SavePriceList", "POST", Models);
+            //Controller.GenerateRequest("Home", "SavePriceList", "POST", Models);
+
+        }
+
+        public void Save()
+        {
 
         }
 

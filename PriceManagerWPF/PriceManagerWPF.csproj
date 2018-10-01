@@ -106,6 +106,7 @@
     <Compile Include="ColorUtilities.cs" />
     <Compile Include="Hub.cs" />
     <Compile Include="MainViewModel.cs" />
+    <Compile Include="Proxy.cs" />
     <Compile Include="WindowViewModel.cs" />
     <Compile Include="Window_material.xaml.cs">
       <DependentUpon>Window_material.xaml</DependentUpon>
